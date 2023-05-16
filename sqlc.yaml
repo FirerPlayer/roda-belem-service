@@ -1,0 +1,14 @@
+version: "2"
+sql:
+- schema: "sql/schema.sql"
+  queries: "sql/queries"
+  engine: "mysql"
+  gen:
+    go:
+      package: "db"
+      out: "internal/infra/mysql"
+      overrides:
+      - db_type: "decimal"
+        go_type: "float64"
+      - db_type: "uuid"
+        go_type: "github.com/google/uuid.UUID"
