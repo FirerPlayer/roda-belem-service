@@ -26,3 +26,14 @@ WHERE placeId = ?;
 SELECT *
 FROM places
 WHERE AccessibilityFeatures = ?;
+-- name: FindPlacesByRating :many
+SELECT *
+FROM places
+WHERE ABS(rating - ?) = 0.5;
+-- name: UpdatePlaceById :execute
+UPDATE places
+SET ?
+WHERE id = ?;
+-- name: DeletePlaceById :execute
+DELETE FROM places
+WHERE id = ?;

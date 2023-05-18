@@ -1,7 +1,5 @@
 package main
 
-import "fmt"
-
 // import (
 // 	"database/sql"
 // 	"net/http"
@@ -15,7 +13,7 @@ import "fmt"
 // )
 
 func main() {
-	// db, err := sql.Open("mysql", "root:root@tcp(host.docker.internal:3306)/products")
+	// db, err := sql.Open("mysql", "root:root@tcp(host.docker.internal:3306)")
 	// if err != nil {
 	// 	panic(err)
 	// }
@@ -32,5 +30,5 @@ func main() {
 	// r.Get("/products/all", productHandlers.ListProducts)
 
 	// go http.ListenAndServe(":8000", r)
-	fmt.Println("Tem que fazer muita coisa ainda")
+
 }
