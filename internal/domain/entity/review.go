@@ -6,25 +6,59 @@ import (
 	"github.com/google/uuid"
 )
 
+type ReactionEnum string
+
+const (
+	Like   ReactionEnum = "like"
+	Love   ReactionEnum = "love"
+	Thanks ReactionEnum = "thanks"
+)
+
+type Reaction struct {
+	React  ReactionEnum
+	UserID string
+}
+
+func NewReaction(react ReactionEnum, userID string) *Reaction {
+	return &Reaction{
+		React:  react,
+		UserID: userID,
+	}
+}
+
+type Photo struct {
+	Id          uuid.UUID
+	Data        []byte
+	Description string
+}
+
+func NewPhoto(data []byte, description string) *Photo {
+	return &Photo{
+		Id:          uuid.New(),
+		Data:        data,
+		Description: description,
+	}
+}
+
 type Review struct {
 	ID        uuid.UUID
 	PlaceID   string
 	UserID    string
 	Text      string
-	Images    []Image
+	Photos    []Photo
 	Rating    float64
 	Reactions []Reaction
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
 
-func NewReview(placeID, userID, text string, images []Image, rating float64, reactions []Reaction) *Review {
+func NewReview(placeID, userID, text string, photos []Photo, rating float64, reactions []Reaction) *Review {
 	return &Review{
 		ID:        uuid.New(),
 		PlaceID:   placeID,
 		UserID:    userID,
 		Text:      text,
-		Images:    images,
+		Photos:    photos,
 		Rating:    rating,
 		Reactions: reactions,
 		CreatedAt: time.Now(),

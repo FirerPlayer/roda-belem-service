@@ -1,5 +1,11 @@
 package main
 
+import (
+	"log"
+
+	"github.com/joho/godotenv"
+)
+
 // import (
 // 	"database/sql"
 // 	"net/http"
@@ -13,6 +19,7 @@ package main
 // )
 
 func main() {
+	LoadEnv()
 	// db, err := sql.Open("mysql", "root:root@tcp(host.docker.internal:3306)")
 	// if err != nil {
 	// 	panic(err)
@@ -30,5 +37,11 @@ func main() {
 	// r.Get("/products/all", productHandlers.ListProducts)
 
 	// go http.ListenAndServe(":8000", r)
+}
 
+func LoadEnv() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Falha ao carregar o arquivo .env: %v", err)
+	}
 }

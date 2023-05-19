@@ -11,6 +11,9 @@ INSERT INTO users (
     updatedAt
   )
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+-- name: GetAllUsers :many
+SELECT *
+FROM users;
 -- name: UpdateUserById :execute
 UPDATE users
 SET ?

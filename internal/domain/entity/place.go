@@ -24,19 +24,15 @@ const (
 	AssistiveTechnologyAccess AccessibilityFeaturesEnum = "AssistiveTechnologyAccess"
 )
 
-type GooglePlace struct {
-	Place maps.PlacesSearchResult
-}
-
 type Place struct {
-	Place                 GooglePlace
+	Place                 maps.PlacesSearchResult
 	AccessibilityFeatures []AccessibilityFeaturesEnum
 	Reviews               []Review
 }
 
 func NewPlace(place maps.PlacesSearchResult, accessibilityFeatures []AccessibilityFeaturesEnum, reviews []Review) *Place {
 	return &Place{
-		Place:                 GooglePlace{Place: place},
+		Place:                 place,
 		AccessibilityFeatures: accessibilityFeatures,
 		Reviews:               reviews,
 	}

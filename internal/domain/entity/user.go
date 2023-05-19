@@ -6,16 +6,35 @@ import (
 	"github.com/google/uuid"
 )
 
+type Mission struct {
+	ID           uuid.UUID
+	Name         string
+	Description  string
+	Reward       int
+	MinimumLevel int
+}
+
+func NewMission(name string, description string, reward int, minimumLevel int) *Mission {
+	return &Mission{
+		ID:           uuid.New(),
+		Name:         name,
+		Description:  description,
+		Reward:       reward,
+		MinimumLevel: minimumLevel,
+	}
+}
+
 type User struct {
-	ID        uuid.UUID `json:"id"`
-	Email     string    `json:"email"`
-	Avatar    []byte    `json:"avatar"`
-	Username  string    `json:"username"`
-	Password  string    `json:"password"`
-	Points    int       `json:"points"`
-	Missions  []Mission `json:"missions"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
+	ID        uuid.UUID
+	Email     string
+	Avatar    []byte
+	Username  string
+	Password  string
+	Points    int
+	Missions  []Mission
+	Favorites []Place
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 func NewUser(email, username, password string) *User {
