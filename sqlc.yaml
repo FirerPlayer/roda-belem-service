@@ -10,5 +10,5 @@ sql:
       overrides:
       - db_type: "decimal"
         go_type: "float64"
-      - db_type: "uuid"
+      - column: "*.uuid"
         go_type: "github.com/google/uuid.UUID"

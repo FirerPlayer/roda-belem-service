@@ -22,6 +22,11 @@ func NewAuthenticationJwtUseCase(usersGateway gateway.UsersGateway) *Authenticat
 	}
 }
 
+// Execute authenticates the user with the provided credentials and generates a JWT token.
+//
+// ctx - The context in which the function is executed.
+// input - The input data transfer object containing user credentials.
+// Returns an output data transfer object containing a JWT token and/or an error in case of failure.
 func (uc *AuthenticationJwtUseCase) Execute(ctx context.Context, input dto.AuthenticateJwtUserInputDTO) (*dto.AuthenticateJwtUserOutputDTO, error) {
 	// Lógica de autenticação do usuário
 	// Verifique as credenciais fornecidas e, se forem válidas, gere um token JWT
@@ -29,18 +34,18 @@ func (uc *AuthenticationJwtUseCase) Execute(ctx context.Context, input dto.Authe
 	if err != nil {
 		return nil, errors.New("user not found " + err.Error())
 	}
-
+	// Password do usuário vem sempre em hash, então usamos bcrypt para verificar a senha
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password))
 	if err != nil {
-		return nil, errors.New("Invalid password " + err.Error())
+		return nil, errors.New("invalid password " + err.Error())
 	}
 
-	// Exemplo de geração de um token JWT com uma assinatura simples
+	// Gera a assinatura JWT
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
+	// Defina outras informações relevantes no token, como tempo de expiração
 	claims["email"] = input.Email
 	claims["exp"] = time.Now().Add(time.Hour * 24 * 365).Unix()
-	// Defina outras informações relevantes no token, como tempo de expiração
 	tokenString, err := token.SignedString([]byte(os.Getenv("jtw_secret_key")))
 	if err != nil {
 		return nil, errors.New("failed to generate token " + err.Error())

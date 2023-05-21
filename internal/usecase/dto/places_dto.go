@@ -1,7 +1,5 @@
 package dto
 
-import "github.com/firerplayer/hexagonal-arch-go/internal/domain/entity"
-
 type FindNearbyPlacesInputDTO struct {
 	Lat    float64
 	Lng    float64
@@ -9,5 +7,16 @@ type FindNearbyPlacesInputDTO struct {
 }
 
 type FindNearbyPlacesOutputDTO struct {
-	Places []*entity.Place
+	ID                    string   `json:"id"`
+	Name                  string   `json:"name"`
+	FormatedAddress       string   `json:"formatedAddress"`
+	Image                 string   `json:"image"`
+	Lat                   float64  `json:"lat"`
+	Lng                   float64  `json:"lng"`
+	Icon                  string   `json:"icon"`
+	Types                 []string `json:"types"`
+	OpeningPeriod         []string `json:"openingPeriod"`
+	Photos                []string `json:"photo"`
+	Rating                float64  `json:"rating"`
+	AccessibilityFeatures []string `json:"accessibilityFeatures"`
 }

@@ -3,7 +3,9 @@ package usecase
 import (
 	"context"
 	"errors"
+	"time"
 
+	"github.com/firerplayer/hexagonal-arch-go/internal/domain/entity"
 	"github.com/firerplayer/hexagonal-arch-go/internal/domain/gateway"
 	"github.com/firerplayer/hexagonal-arch-go/internal/usecase/dto"
 )
@@ -28,7 +30,12 @@ func (uc *UpdateUserUseCase) Execute(ctx context.Context, input dto.UpdateUserIn
 	if err != nil {
 		return errors.New("User not found " + err.Error())
 	}
-	err = uc.UsersGateway.UpdateUserById(ctx, input.UserId, &input.ChagedUser)
+	err = uc.UsersGateway.UpdateUserById(ctx, input.UserId, &entity.User{
+		Email:     input.Email,
+		Username:  input.Username,
+		Avatar:    input.Avatar,
+		UpdatedAt: time.Now(),
+	})
 	if err != nil {
 		return errors.New("Failed to update user " + err.Error())
 	}

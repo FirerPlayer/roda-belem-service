@@ -25,15 +25,25 @@ type ListAllUsersOutputDTO struct {
 }
 
 type UpdateUserInputDTO struct {
-	UserId     string
-	ChagedUser entity.User
+	UserId   string `json:"userId"`
+	Email    string `json:"email"`
+	Username string `json:"username"`
+	Avatar   []byte `json:"avatar"`
 }
 
 type FindUserByEmailInputDTO struct {
 	Email string
 }
 type FindUserByEmailOutputDTO struct {
-	User entity.User
+	ID        string           `json:"id"`
+	Email     string           `json:"email"`
+	Username  string           `json:"username"`
+	Avatar    []byte           `json:"avatar"`
+	Points    int              `json:"points"`
+	Missions  []entity.Mission `json:"missions"`
+	Favorites []entity.Place   `json:"favorites"`
+	CreatedAt time.Time        `json:"createdAt"`
+	UpdatedAt time.Time        `json:"updatedAt"`
 }
 
 type AuthenticateJwtUserInputDTO struct {

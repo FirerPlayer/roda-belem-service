@@ -16,15 +16,13 @@ CREATE TABLE IF NOT EXISTS `places` (
   `place_id` varchar(255),
   `name` varchar(255),
   `formatted_address` varchar(255),
-  `lat` float,
-  `lng` float,
+  `coordinates` POINT,
   `icon` varchar(255),
   `types` JSON,
   `opening_periods` JSON,
   `photos` JSON,
   `rating` float,
-  `AccessibilityFeatures` JSON,
-  FOREIGN KEY (place_id) REFERENCES places (id),
+  `accessibility_features` JSON
 );
 CREATE TABLE IF NOT EXISTS `reviews` (
   `id` uuid,

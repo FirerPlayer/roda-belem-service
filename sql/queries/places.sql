@@ -1,19 +1,18 @@
 -- name: CreatePlace :execute
 INSERT INTO places (
     id,
-    placeId,
+    place_id,
     name,
     formatted_address,
-    lat,
-    lng,
+    coordinates,
     icon,
     types,
     opening_periods,
     photos,
     rating,
-    AccessibilityFeatures
+    accessibility_features
   )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+VALUES (?, ?, ?, ?, POINT(?, ?), ?, ?, ?, ?, ?, ?);
 -- name: FindPlaceById :one
 SELECT *
 FROM places
@@ -21,7 +20,11 @@ WHERE id = ?;
 -- name: FindPlaceByPlaceId :one
 SELECT *
 FROM places
-WHERE placeId = ?;
+WHERE place_id = ?;
+-- name: FindPlacesNearby :many
+SELECT *
+FROM places -- distance in meters
+WHERE ST_DISTANCE_SPHERE(coordinates, POINT(?, ?)) <= ?;
 -- name: FindPlacesByAccessibilityFeatures :many
 SELECT *
 FROM places

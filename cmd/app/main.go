@@ -37,6 +37,7 @@ func main() {
 	// r.Get("/products/all", productHandlers.ListProducts)
 
 	// go http.ListenAndServe(":8000", r)
+
 }
 
 func LoadEnv() {

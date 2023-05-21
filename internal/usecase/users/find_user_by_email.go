@@ -28,7 +28,16 @@ func (uc *FindUserByEmailUsecase) Execute(ctx context.Context, email string) (*d
 	if err != nil {
 		return nil, errors.New("failed to find user " + err.Error())
 	}
+
 	return &dto.FindUserByEmailOutputDTO{
-		User: *user,
+		ID:        user.ID.String(),
+		Email:     user.Email,
+		Username:  user.Username,
+		Avatar:    user.Avatar,
+		Points:    user.Points,
+		Missions:  user.Missions,
+		Favorites: user.Favorites,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
 	}, nil
 }
