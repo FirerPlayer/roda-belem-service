@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"googlemaps.github.io/maps"
+	"github.com/google/uuid"
 )
 
 type AccessibilityFeaturesEnum string
@@ -25,15 +25,48 @@ const (
 )
 
 type Place struct {
-	Place                 maps.PlacesSearchResult
+	ID                    uuid.UUID
+	PlaceId               string
+	Name                  string
+	FormatedAddress       string
+	Lat                   float64
+	Lng                   float64
+	Icon                  string
+	Types                 []string
+	OpeningPeriods        []string
+	Photos                []Photo
+	Rating                float64
 	AccessibilityFeatures []AccessibilityFeaturesEnum
 	Reviews               []Review
 }
 
-func NewPlace(place maps.PlacesSearchResult, accessibilityFeatures []AccessibilityFeaturesEnum, reviews []Review) *Place {
+func NewPlace(placeId, name, formatedAddress string, lat, lng float64, icon string, types []string, openingPeriods []string, photos []Photo, rating float64, accessibilityFeatures []AccessibilityFeaturesEnum, reviews []Review) *Place {
 	return &Place{
-		Place:                 place,
+		ID:                    uuid.New(),
+		PlaceId:               placeId,
+		Name:                  name,
+		FormatedAddress:       formatedAddress,
+		Lat:                   lat,
+		Lng:                   lng,
+		Icon:                  icon,
+		Types:                 types,
+		OpeningPeriods:        openingPeriods,
+		Photos:                photos,
+		Rating:                rating,
 		AccessibilityFeatures: accessibilityFeatures,
 		Reviews:               reviews,
 	}
+
+}
+
+func (p *Place) RefreshRatings() {
+	rating := 0.0
+	for _, review := range p.Reviews {
+		rating += review.Rating
+	}
+	p.Rating = rating / float64(len(p.Reviews))
+}
+
+func (p *Place) GetRating() float64 {
+	return p.Rating
 }

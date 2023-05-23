@@ -25,10 +25,14 @@ type ListAllUsersOutputDTO struct {
 }
 
 type UpdateUserInputDTO struct {
-	UserId   string `json:"userId"`
-	Email    string `json:"email"`
-	Username string `json:"username"`
-	Avatar   []byte `json:"avatar"`
+	UserId    string           `json:"userId"`
+	Email     string           `json:"email"`
+	Avatar    []byte           `json:"avatar"`
+	Username  string           `json:"username"`
+	Password  string           `json:"password"`
+	Points    int              `json:"points"`
+	Missions  []entity.Mission `json:"missions"`
+	UpdatedAt time.Time        `json:"updatedAt"`
 }
 
 type FindUserByEmailInputDTO struct {
@@ -58,4 +62,8 @@ type AuthenticateJwtUserOutputDTO struct {
 type AddFavoritesInputDTO struct {
 	UserId  string `json:"userId"`
 	PlaceId string `json:"placeId"`
+}
+
+type DeleteUserByIdInputDTO struct {
+	UserId string `json:"userId"`
 }

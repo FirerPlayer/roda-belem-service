@@ -1,24 +1,24 @@
--- name: CreateReview :execute
+-- name: CreateReview :exec
 INSERT INTO reviews (
     id,
-    placeId,
-    userId,
+    place_id,
+    user_id,
     text,
     images,
     rating,
     reactions,
-    createdAt,
-    updatedAt
+    created_at,
+    updated_at
   )
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
 -- name: FindReviewsByPlaceId :many
 SELECT *
 FROM reviews
-WHERE placeId = ?;
+WHERE place_id = ?;
 -- name: FindReviewsByUserId :many
 SELECT *
 FROM reviews
-WHERE userId = ?;
+WHERE user_id = ?;
 -- name: FindReviewById :one
 SELECT *
 FROM reviews

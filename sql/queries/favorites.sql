@@ -1,7 +1,7 @@
--- name: CreateFavorite :execute
+-- name: CreateFavorite :exec
 INSERT INTO favorites (user_id, place_id)
 VALUES (?, ?);
--- name: DeleteFavorite :execute
+-- name: DeleteFavorite :exec
 DELETE FROM favorites
 WHERE user_id = ?
   AND place_id = ?;

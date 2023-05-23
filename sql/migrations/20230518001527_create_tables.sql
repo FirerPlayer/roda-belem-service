@@ -1,7 +1,7 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS `users` (
-  `id` uuid,
+  `id` varchar(36) NOT NULL PRIMARY KEY,
   `email` varchar(255) NOT NULL UNIQUE,
   `avatar` mediumblob,
   `username` varchar(255) NOT NULL,
@@ -12,11 +12,12 @@ CREATE TABLE IF NOT EXISTS `users` (
   `updated_at` datetime
 );
 CREATE TABLE IF NOT EXISTS `places` (
-  `id` uuid,
-  `place_id` varchar(255),
+  `id` varchar(36) NOT NULL PRIMARY KEY,
+  `place_id` varchar(8000),
   `name` varchar(255),
   `formatted_address` varchar(255),
-  `coordinates` POINT,
+  `lat` float,
+  `lng` float,
   `icon` varchar(255),
   `types` JSON,
   `opening_periods` JSON,
@@ -25,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `places` (
   `accessibility_features` JSON
 );
 CREATE TABLE IF NOT EXISTS `reviews` (
-  `id` uuid,
+  `id` VARCHAR(36) NOT NULL PRIMARY KEY,
   `place_id` varchar(255),
   `user_id` varchar(255),
   `text` varchar(255),
@@ -38,13 +39,16 @@ CREATE TABLE IF NOT EXISTS `reviews` (
   FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS `favorites` (
-  `place_id` varchar(255),
-  `user_id` varchar(255),
+  `place_id` varchar(36),
+  `user_id` varchar(36),
   FOREIGN KEY (place_id) REFERENCES places (id) ON DELETE CASCADE,
   FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 -- +goose StatementEnd
 -- +goose Down
 -- +goose StatementBegin
-SELECT 'down SQL query';
+DROP TABLE IF EXISTS `favorites`;
+DROP TABLE IF EXISTS `reviews`;
+DROP TABLE IF EXISTS `places`;
+DROP TABLE IF EXISTS `users`;
 -- +goose StatementEnd

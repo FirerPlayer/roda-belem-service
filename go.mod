@@ -3,6 +3,7 @@ module github.com/firerplayer/hexagonal-arch-go
 go 1.20
 
 require (
+	github.com/bits-and-blooms/bloom/v3 v3.4.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/google/uuid v1.3.0
 	github.com/joho/godotenv v1.5.1
@@ -11,6 +12,7 @@ require (
 )
 
 require (
+	github.com/bits-and-blooms/bitset v1.3.1 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/stretchr/testify v1.8.2 // indirect

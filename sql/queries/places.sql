@@ -1,10 +1,11 @@
--- name: CreatePlace :execute
+-- name: CreatePlace :exec
 INSERT INTO places (
     id,
     place_id,
     name,
     formatted_address,
-    coordinates,
+    lat,
+    lng,
     icon,
     types,
     opening_periods,
@@ -12,7 +13,7 @@ INSERT INTO places (
     rating,
     accessibility_features
   )
-VALUES (?, ?, ?, ?, POINT(?, ?), ?, ?, ?, ?, ?, ?);
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 -- name: FindPlaceById :one
 SELECT *
 FROM places
@@ -24,15 +25,25 @@ WHERE place_id = ?;
 -- name: FindPlacesNearby :many
 SELECT *
 FROM places -- distance in meters
-WHERE ST_DISTANCE_SPHERE(coordinates, POINT(?, ?)) <= ?;
+WHERE ST_DISTANCE_SPHERE(POINT(lat, lng), POINT(?, ?)) <= ?;
 -- name: FindPlacesByAccessibilityFeatures :many
 SELECT *
 FROM places
-WHERE AccessibilityFeatures = ?;
--- name: UpdatePlaceById :execute
+WHERE accessibility_features = ?;
+-- name: UpdatePlaceById :exec
 UPDATE places
-SET ?
+SET place_id = ?,
+  name = ?,
+  formatted_address = ?,
+  lat = ?,
+  lng = ?,
+  icon = ?,
+  types = ?,
+  opening_periods = ?,
+  photos = ?,
+  rating = ?,
+  accessibility_features = ?
 WHERE id = ?;
--- name: DeletePlaceById :execute
+-- name: DeletePlaceById :exec
 DELETE FROM places
-WHERE id = ?;
+WHERE id = $1;

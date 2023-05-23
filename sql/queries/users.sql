@@ -1,4 +1,4 @@
--- name: CreateUser :execute
+-- name: CreateUser :exec
 INSERT INTO users (
     id,
     email,
@@ -7,21 +7,27 @@ INSERT INTO users (
     password,
     points,
     missions,
-    createdAt,
-    updatedAt
+    created_at,
+    updated_at
   )
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
 -- name: GetAllUsers :many
 SELECT *
 FROM users;
--- name: UpdateUserById :execute
+-- name: UpdateUserById :exec
 UPDATE users
-SET ?
+SET email = ?,
+  avatar = ?,
+  username = ?,
+  password = ?,
+  points = ?,
+  missions = ?,
+  updated_at = ?
 WHERE id = ?;
--- name: DeleteUserById :execute
+-- name: DeleteUserById :exec
 DELETE FROM users
 WHERE id = ?;
--- name: UpdateUserPointsByUserId :execute
+-- name: UpdateUserPointsByUserId :exec
 UPDATE users
 SET points = ?
 WHERE id = ?;

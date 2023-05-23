@@ -26,14 +26,13 @@ func NewUpdateUserUseCase(usersGateway gateway.UsersGateway) *UpdateUserUseCase 
 // input is the input data for updating the user.
 // Returns an error if the update operation fails.
 func (uc *UpdateUserUseCase) Execute(ctx context.Context, input dto.UpdateUserInputDTO) error {
-	_, err := uc.UsersGateway.FindUserById(ctx, input.UserId)
-	if err != nil {
-		return errors.New("User not found " + err.Error())
-	}
-	err = uc.UsersGateway.UpdateUserById(ctx, input.UserId, &entity.User{
+	err := uc.UsersGateway.UpdateUserById(ctx, input.UserId, &entity.User{
 		Email:     input.Email,
-		Username:  input.Username,
 		Avatar:    input.Avatar,
+		Username:  input.Username,
+		Password:  input.Password,
+		Points:    input.Points,
+		Missions:  input.Missions,
 		UpdatedAt: time.Now(),
 	})
 	if err != nil {
