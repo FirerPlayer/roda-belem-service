@@ -46,13 +46,15 @@
 
 ## :dart: About ##
 
-Describe your project
+The backend service for the Roda Belém app has a hexagonal architecture with a REST API and consumes the Google Places API. It is designed for high-performance communication with the Roda Belém frontend.
 
 ## :sparkles: Features ##
 
-:heavy_check_mark: Feature 1;\
-:heavy_check_mark: Feature 2;\
-:heavy_check_mark: Feature 3;
+:heavy_check_mark: Hexagonal Architecture\
+:heavy_check_mark: Scalable and easy maintenance\
+:heavy_check_mark: Bloom filter implemented to reduce latency and improve server response\
+:heavy_check_mark: Data persistence in MySQL database\
+:heavy_check_mark: No ORM approach, with SQLC, for faster database interaction
 
 ## :rocket: Technologies ##
 
