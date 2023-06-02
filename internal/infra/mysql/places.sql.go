@@ -14,7 +14,7 @@ import (
 const createPlace = `-- name: CreatePlace :exec
 INSERT INTO places (
     id,
-    place_id,
+    google_place_id,
     name,
     formatted_address,
     lat,
@@ -23,31 +23,29 @@ INSERT INTO places (
     types,
     opening_periods,
     photos,
-    rating,
-    accessibility_features
+    rating
   )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 `
 
 type CreatePlaceParams struct {
-	ID                    string
-	PlaceID               sql.NullString
-	Name                  sql.NullString
-	FormattedAddress      sql.NullString
-	Lat                   sql.NullFloat64
-	Lng                   sql.NullFloat64
-	Icon                  sql.NullString
-	Types                 json.RawMessage
-	OpeningPeriods        json.RawMessage
-	Photos                json.RawMessage
-	Rating                sql.NullFloat64
-	AccessibilityFeatures json.RawMessage
+	ID               string
+	GooglePlaceID    sql.NullString
+	Name             sql.NullString
+	FormattedAddress sql.NullString
+	Lat              sql.NullFloat64
+	Lng              sql.NullFloat64
+	Icon             sql.NullString
+	Types            json.RawMessage
+	OpeningPeriods   json.RawMessage
+	Photos           json.RawMessage
+	Rating           sql.NullFloat64
 }
 
 func (q *Queries) CreatePlace(ctx context.Context, arg CreatePlaceParams) error {
 	_, err := q.db.ExecContext(ctx, createPlace,
 		arg.ID,
-		arg.PlaceID,
+		arg.GooglePlaceID,
 		arg.Name,
 		arg.FormattedAddress,
 		arg.Lat,
@@ -57,7 +55,6 @@ func (q *Queries) CreatePlace(ctx context.Context, arg CreatePlaceParams) error 
 		arg.OpeningPeriods,
 		arg.Photos,
 		arg.Rating,
-		arg.AccessibilityFeatures,
 	)
 	return err
 }
@@ -72,8 +69,33 @@ func (q *Queries) DeletePlaceById(ctx context.Context) error {
 	return err
 }
 
+const findPlaceByGooglePlaceId = `-- name: FindPlaceByGooglePlaceId :one
+SELECT id, google_place_id, name, formatted_address, lat, lng, icon, types, opening_periods, photos, rating
+FROM places
+WHERE google_place_id = ?
+`
+
+func (q *Queries) FindPlaceByGooglePlaceId(ctx context.Context, googlePlaceID sql.NullString) (Place, error) {
+	row := q.db.QueryRowContext(ctx, findPlaceByGooglePlaceId, googlePlaceID)
+	var i Place
+	err := row.Scan(
+		&i.ID,
+		&i.GooglePlaceID,
+		&i.Name,
+		&i.FormattedAddress,
+		&i.Lat,
+		&i.Lng,
+		&i.Icon,
+		&i.Types,
+		&i.OpeningPeriods,
+		&i.Photos,
+		&i.Rating,
+	)
+	return i, err
+}
+
 const findPlaceById = `-- name: FindPlaceById :one
-SELECT id, place_id, name, formatted_address, lat, lng, icon, types, opening_periods, photos, rating, accessibility_features
+SELECT id, google_place_id, name, formatted_address, lat, lng, icon, types, opening_periods, photos, rating
 FROM places
 WHERE id = ?
 `
@@ -83,7 +105,7 @@ func (q *Queries) FindPlaceById(ctx context.Context, id string) (Place, error) {
 	var i Place
 	err := row.Scan(
 		&i.ID,
-		&i.PlaceID,
+		&i.GooglePlaceID,
 		&i.Name,
 		&i.FormattedAddress,
 		&i.Lat,
@@ -93,66 +115,41 @@ func (q *Queries) FindPlaceById(ctx context.Context, id string) (Place, error) {
 		&i.OpeningPeriods,
 		&i.Photos,
 		&i.Rating,
-		&i.AccessibilityFeatures,
 	)
 	return i, err
 }
 
-const findPlaceByPlaceId = `-- name: FindPlaceByPlaceId :one
-SELECT id, place_id, name, formatted_address, lat, lng, icon, types, opening_periods, photos, rating, accessibility_features
-FROM places
-WHERE place_id = ?
+const findPlacesByAccessibilityFeature = `-- name: FindPlacesByAccessibilityFeature :many
+SELECT p.id,
+  COUNT(*) AS num_reviews
+FROM places p
+  JOIN reviews r ON p.id = r.place_id
+  JOIN accessibility_features af ON r.review_id = af.review_id
+WHERE af.feature IN (?)
+GROUP BY p.id
+HAVING COUNT(DISTINCT af.feature) = ?
 `
 
-func (q *Queries) FindPlaceByPlaceId(ctx context.Context, placeID sql.NullString) (Place, error) {
-	row := q.db.QueryRowContext(ctx, findPlaceByPlaceId, placeID)
-	var i Place
-	err := row.Scan(
-		&i.ID,
-		&i.PlaceID,
-		&i.Name,
-		&i.FormattedAddress,
-		&i.Lat,
-		&i.Lng,
-		&i.Icon,
-		&i.Types,
-		&i.OpeningPeriods,
-		&i.Photos,
-		&i.Rating,
-		&i.AccessibilityFeatures,
-	)
-	return i, err
+type FindPlacesByAccessibilityFeatureParams struct {
+	Feature   sql.NullString
+	Feature_2 sql.NullString
 }
 
-const findPlacesByAccessibilityFeatures = `-- name: FindPlacesByAccessibilityFeatures :many
-SELECT id, place_id, name, formatted_address, lat, lng, icon, types, opening_periods, photos, rating, accessibility_features
-FROM places
-WHERE accessibility_features = ?
-`
+type FindPlacesByAccessibilityFeatureRow struct {
+	ID         string
+	NumReviews int64
+}
 
-func (q *Queries) FindPlacesByAccessibilityFeatures(ctx context.Context, accessibilityFeatures json.RawMessage) ([]Place, error) {
-	rows, err := q.db.QueryContext(ctx, findPlacesByAccessibilityFeatures, accessibilityFeatures)
+func (q *Queries) FindPlacesByAccessibilityFeature(ctx context.Context, arg FindPlacesByAccessibilityFeatureParams) ([]FindPlacesByAccessibilityFeatureRow, error) {
+	rows, err := q.db.QueryContext(ctx, findPlacesByAccessibilityFeature, arg.Feature, arg.Feature_2)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Place
+	var items []FindPlacesByAccessibilityFeatureRow
 	for rows.Next() {
-		var i Place
-		if err := rows.Scan(
-			&i.ID,
-			&i.PlaceID,
-			&i.Name,
-			&i.FormattedAddress,
-			&i.Lat,
-			&i.Lng,
-			&i.Icon,
-			&i.Types,
-			&i.OpeningPeriods,
-			&i.Photos,
-			&i.Rating,
-			&i.AccessibilityFeatures,
-		); err != nil {
+		var i FindPlacesByAccessibilityFeatureRow
+		if err := rows.Scan(&i.ID, &i.NumReviews); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -167,7 +164,7 @@ func (q *Queries) FindPlacesByAccessibilityFeatures(ctx context.Context, accessi
 }
 
 const findPlacesNearby = `-- name: FindPlacesNearby :many
-SELECT id, place_id, name, formatted_address, lat, lng, icon, types, opening_periods, photos, rating, accessibility_features
+SELECT id, google_place_id, name, formatted_address, lat, lng, icon, types, opening_periods, photos, rating
 FROM places -- distance in meters
 WHERE ST_DISTANCE_SPHERE(POINT(lat, lng), POINT(?, ?)) <= ?
 `
@@ -189,7 +186,7 @@ func (q *Queries) FindPlacesNearby(ctx context.Context, arg FindPlacesNearbyPara
 		var i Place
 		if err := rows.Scan(
 			&i.ID,
-			&i.PlaceID,
+			&i.GooglePlaceID,
 			&i.Name,
 			&i.FormattedAddress,
 			&i.Lat,
@@ -199,7 +196,6 @@ func (q *Queries) FindPlacesNearby(ctx context.Context, arg FindPlacesNearbyPara
 			&i.OpeningPeriods,
 			&i.Photos,
 			&i.Rating,
-			&i.AccessibilityFeatures,
 		); err != nil {
 			return nil, err
 		}
@@ -216,7 +212,7 @@ func (q *Queries) FindPlacesNearby(ctx context.Context, arg FindPlacesNearbyPara
 
 const updatePlaceById = `-- name: UpdatePlaceById :exec
 UPDATE places
-SET place_id = ?,
+SET google_place_id = ?,
   name = ?,
   formatted_address = ?,
   lat = ?,
@@ -225,29 +221,27 @@ SET place_id = ?,
   types = ?,
   opening_periods = ?,
   photos = ?,
-  rating = ?,
-  accessibility_features = ?
+  rating = ?
 WHERE id = ?
 `
 
 type UpdatePlaceByIdParams struct {
-	PlaceID               sql.NullString
-	Name                  sql.NullString
-	FormattedAddress      sql.NullString
-	Lat                   sql.NullFloat64
-	Lng                   sql.NullFloat64
-	Icon                  sql.NullString
-	Types                 json.RawMessage
-	OpeningPeriods        json.RawMessage
-	Photos                json.RawMessage
-	Rating                sql.NullFloat64
-	AccessibilityFeatures json.RawMessage
-	ID                    string
+	GooglePlaceID    sql.NullString
+	Name             sql.NullString
+	FormattedAddress sql.NullString
+	Lat              sql.NullFloat64
+	Lng              sql.NullFloat64
+	Icon             sql.NullString
+	Types            json.RawMessage
+	OpeningPeriods   json.RawMessage
+	Photos           json.RawMessage
+	Rating           sql.NullFloat64
+	ID               string
 }
 
 func (q *Queries) UpdatePlaceById(ctx context.Context, arg UpdatePlaceByIdParams) error {
 	_, err := q.db.ExecContext(ctx, updatePlaceById,
-		arg.PlaceID,
+		arg.GooglePlaceID,
 		arg.Name,
 		arg.FormattedAddress,
 		arg.Lat,
@@ -257,7 +251,6 @@ func (q *Queries) UpdatePlaceById(ctx context.Context, arg UpdatePlaceByIdParams
 		arg.OpeningPeriods,
 		arg.Photos,
 		arg.Rating,
-		arg.AccessibilityFeatures,
 		arg.ID,
 	)
 	return err

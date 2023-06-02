@@ -9,24 +9,28 @@ import (
 	"encoding/json"
 )
 
+type AccessibilityFeature struct {
+	ReviewID sql.NullString
+	Feature  sql.NullString
+}
+
 type Favorite struct {
 	PlaceID sql.NullString
 	UserID  sql.NullString
 }
 
 type Place struct {
-	ID                    string
-	PlaceID               sql.NullString
-	Name                  sql.NullString
-	FormattedAddress      sql.NullString
-	Lat                   sql.NullFloat64
-	Lng                   sql.NullFloat64
-	Icon                  sql.NullString
-	Types                 json.RawMessage
-	OpeningPeriods        json.RawMessage
-	Photos                json.RawMessage
-	Rating                sql.NullFloat64
-	AccessibilityFeatures json.RawMessage
+	ID               string
+	GooglePlaceID    sql.NullString
+	Name             sql.NullString
+	FormattedAddress sql.NullString
+	Lat              sql.NullFloat64
+	Lng              sql.NullFloat64
+	Icon             sql.NullString
+	Types            json.RawMessage
+	OpeningPeriods   json.RawMessage
+	Photos           json.RawMessage
+	Rating           sql.NullFloat64
 }
 
 type Review struct {

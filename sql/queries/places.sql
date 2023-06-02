@@ -1,7 +1,7 @@
 -- name: CreatePlace :exec
 INSERT INTO places (
     id,
-    place_id,
+    google_place_id,
     name,
     formatted_address,
     lat,
@@ -10,29 +10,24 @@ INSERT INTO places (
     types,
     opening_periods,
     photos,
-    rating,
-    accessibility_features
+    rating
   )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 -- name: FindPlaceById :one
 SELECT *
 FROM places
 WHERE id = ?;
--- name: FindPlaceByPlaceId :one
+-- name: FindPlaceByGooglePlaceId :one
 SELECT *
 FROM places
-WHERE place_id = ?;
+WHERE google_place_id = ?;
 -- name: FindPlacesNearby :many
 SELECT *
 FROM places -- distance in meters
 WHERE ST_DISTANCE_SPHERE(POINT(lat, lng), POINT(?, ?)) <= ?;
--- name: FindPlacesByAccessibilityFeatures :many
-SELECT *
-FROM places
-WHERE accessibility_features = ?;
 -- name: UpdatePlaceById :exec
 UPDATE places
-SET place_id = ?,
+SET google_place_id = ?,
   name = ?,
   formatted_address = ?,
   lat = ?,
@@ -41,9 +36,17 @@ SET place_id = ?,
   types = ?,
   opening_periods = ?,
   photos = ?,
-  rating = ?,
-  accessibility_features = ?
+  rating = ?
 WHERE id = ?;
 -- name: DeletePlaceById :exec
 DELETE FROM places
 WHERE id = $1;
+-- name: FindPlacesByAccessibilityFeature :many
+SELECT p.id,
+  COUNT(*) AS num_reviews
+FROM places p
+  JOIN reviews r ON p.id = r.place_id
+  JOIN accessibility_features af ON r.review_id = af.review_id
+WHERE af.feature IN (?)
+GROUP BY p.id
+HAVING COUNT(DISTINCT af.feature) = ?

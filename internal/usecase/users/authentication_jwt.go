@@ -41,11 +41,10 @@ func (uc *AuthenticationJwtUseCase) Execute(ctx context.Context, input dto.Authe
 	}
 
 	// Gera a assinatura JWT
-	token := jwt.New(jwt.SigningMethodHS256)
-	claims := token.Claims.(jwt.MapClaims)
-	// Defina outras informações relevantes no token, como tempo de expiração
-	claims["email"] = input.Email
-	claims["exp"] = time.Now().Add(time.Hour * 24 * 365).Unix()
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"user_id": user.ID.String(),
+		"exp":     time.Now().Add(time.Hour * 24 * 365).Unix(),
+	})
 	tokenString, err := token.SignedString([]byte(os.Getenv("jtw_secret_key")))
 	if err != nil {
 		return nil, errors.New("failed to generate token " + err.Error())

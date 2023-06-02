@@ -8,7 +8,6 @@ import (
 )
 
 type CreateUserInputDTO struct {
-	ID        uuid.UUID `json:"id"`
 	Email     string    `json:"email"`
 	Avatar    []byte    `json:"avatar"`
 	Username  string    `json:"username"`

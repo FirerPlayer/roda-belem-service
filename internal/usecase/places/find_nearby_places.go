@@ -9,25 +9,26 @@ import (
 	"github.com/firerplayer/hexagonal-arch-go/internal/domain/gateway"
 	"github.com/firerplayer/hexagonal-arch-go/internal/infra/blooms"
 	"github.com/firerplayer/hexagonal-arch-go/internal/usecase/dto"
-	"github.com/google/uuid"
 	"googlemaps.github.io/maps"
 )
 
 type FindNearbyPlacesUseCase struct {
 	PlacesGateway    gateway.PlacesGateway
+	ReviewsGateway   gateway.ReviewsGateway
 	GoogleMapsClient *maps.Client
 	BloomFilter      *blooms.BloomFilter
 }
 
-func NewFindNearbyPlacesUseCase(placesGateway gateway.PlacesGateway, googleMapsClient *maps.Client, bloomFilter *blooms.BloomFilter) *FindNearbyPlacesUseCase {
+func NewFindNearbyPlacesUseCase(placesGateway gateway.PlacesGateway, reviewsGateway gateway.ReviewsGateway, googleMapsClient *maps.Client, bloomFilter *blooms.BloomFilter) *FindNearbyPlacesUseCase {
 	return &FindNearbyPlacesUseCase{
 		PlacesGateway:    placesGateway,
+		ReviewsGateway:   reviewsGateway,
 		GoogleMapsClient: googleMapsClient,
 		BloomFilter:      bloomFilter,
 	}
 }
 
-func (u *FindNearbyPlacesUseCase) GetNearbyPlacesFromGoogleMaps(ctx context.Context, input *dto.FindNearbyPlacesInputDTO) ([]*entity.Place, error) {
+func (u *FindNearbyPlacesUseCase) GetNearbyPlacesFromGoogleMapsWithPersistence(ctx context.Context, input dto.FindNearbyPlacesInputDTO) ([]*entity.Place, error) {
 	request := &maps.NearbySearchRequest{
 		Location: &maps.LatLng{
 			Lat: input.Lat,
@@ -41,20 +42,18 @@ func (u *FindNearbyPlacesUseCase) GetNearbyPlacesFromGoogleMaps(ctx context.Cont
 	}
 	var output []*entity.Place
 	for _, place := range response.Results {
-		newPlace := &entity.Place{
-			ID:              uuid.New(),
-			PlaceId:         place.PlaceID,
-			Name:            place.Name,
-			FormatedAddress: place.FormattedAddress,
-			Lat:             place.Geometry.Location.Lat,
-			Lng:             place.Geometry.Location.Lng,
-			Icon:            place.Icon,
-			Types:           place.Types,
-			OpeningPeriods:  place.OpeningHours.WeekdayText,
-		}
+		newPlace := entity.NewPlace(
+			place.PlaceID,
+			place.Name,
+			place.FormattedAddress,
+			place.Geometry.Location.Lat,
+			place.Geometry.Location.Lng,
+			place.Icon, place.Types,
+			place.OpeningHours.WeekdayText,
+		)
 		err := u.PlacesGateway.Create(ctx, newPlace)
 		if err != nil {
-			return nil, errors.New("Failed to create places from nearby places request: " + err.Error())
+			return nil, errors.New("Failed to persist place while Google nearby search: " + err.Error())
 		}
 		u.BloomFilter.Add(newPlace.ID.String())
 		output = append(output, newPlace)
@@ -63,26 +62,49 @@ func (u *FindNearbyPlacesUseCase) GetNearbyPlacesFromGoogleMaps(ctx context.Cont
 	return output, nil
 }
 
-func (u *FindNearbyPlacesUseCase) Execute(ctx context.Context, input dto.FindNearbyPlacesInputDTO) ([]*dto.FindNearbyPlacesOutputDTO, error) {
+func (u *FindNearbyPlacesUseCase) GetNearbyPlacesFromGoogleOrRepository(ctx context.Context, input dto.FindNearbyPlacesInputDTO) ([]*entity.Place, error) {
+	if input.IsFromGoogle {
+		places, err := u.GetNearbyPlacesFromGoogleMapsWithPersistence(ctx, input)
+		if err != nil {
+			return nil, errors.New("Failed to find nearby places from Google: " + err.Error())
+		}
+		return places, nil
+	}
 	places, err := u.PlacesGateway.FindNearbyPlaces(ctx, input.Lat, input.Lng, input.Radius)
 	if err != nil {
 		return nil, errors.New("Failed to find nearby places " + err.Error())
 	}
+	return places, nil
+}
+
+// Execute finds nearby places and returns an array of related output DTO objects or an error.
+//
+// ctx - context object.
+// input - input DTO object for finding nearby places.
+//
+// []*dto.FindNearbyPlacesOutputDTO - an array of output DTO objects containing information about nearby places.
+// error - an error object if the function fails to find nearby places.
+func (u *FindNearbyPlacesUseCase) Execute(ctx context.Context, input dto.FindNearbyPlacesInputDTO) ([]*dto.FindNearbyPlacesOutputDTO, error) {
+	places, err := u.GetNearbyPlacesFromGoogleOrRepository(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+
 	var output []*dto.FindNearbyPlacesOutputDTO
 	for _, place := range places {
 		output = append(output, &dto.FindNearbyPlacesOutputDTO{
-			ID:                    place.ID.String(),
-			Name:                  place.GooglePlace.Name,
-			FormatedAddress:       place.GooglePlace.FormattedAddress,
-			Lat:                   place.GooglePlace.Geometry.Location.Lat,
-			Lng:                   place.GooglePlace.Geometry.Location.Lng,
-			Icon:                  place.GooglePlace.Icon,
-			Types:                 place.GooglePlace.Types,
-			OpeningPeriod:         place.GooglePlace.OpeningHours.WeekdayText,
-			Photos:                place.Photos,
-			Rating:                place.Rating,
-			AccessibilityFeatures: place.AccessibilityFeatures,
+			ID:              place.ID.String(),
+			Name:            place.Name,
+			FormatedAddress: place.FormatedAddress,
+			Lat:             place.Lat,
+			Lng:             place.Lng,
+			Icon:            place.Icon,
+			Types:           place.Types,
+			OpeningPeriods:  place.OpeningPeriods,
+			Photos:          place.Photos,
+			Rating:          place.Rating,
 		})
 	}
+
 	return output, nil
 }

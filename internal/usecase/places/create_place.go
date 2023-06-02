@@ -8,7 +8,6 @@ import (
 	"github.com/firerplayer/hexagonal-arch-go/internal/domain/gateway"
 	"github.com/firerplayer/hexagonal-arch-go/internal/infra/blooms"
 	"github.com/firerplayer/hexagonal-arch-go/internal/usecase/dto"
-	"github.com/google/uuid"
 )
 
 type CreatePlaceUseCase struct {
@@ -24,21 +23,21 @@ func NewCreatePlaceUseCase(placesGateway gateway.PlacesGateway, bloomFilter *blo
 }
 
 func (uc *CreatePlaceUseCase) Execute(ctx context.Context, input *dto.CreatePlaceInputDTO) error {
-	err := uc.PlacesGateway.Create(ctx, &entity.Place{
-		ID:              uuid.New(),
-		PlaceId:         input.PlaceId,
-		Name:            input.Name,
-		FormatedAddress: input.FormatedAddress,
-		Lat:             input.Lat,
-		Lng:             input.Lng,
-		Icon:            input.Icon,
-		Types:           input.Types,
-		OpeningPeriods:  input.OpeningPeriods,
-	})
+	newPlace := entity.NewPlace(
+		input.GooglePlaceId,
+		input.Name,
+		input.FormatedAddress,
+		input.Lat,
+		input.Lng,
+		input.Icon,
+		input.Types,
+		input.OpeningPeriods,
+	)
+	err := uc.PlacesGateway.Create(ctx, newPlace)
 	if err != nil {
-		return errors.New("Failed to create place " + err.Error())
+		return errors.New("Failed to create place: " + err.Error())
 	}
-	uc.BloomFilter.Add(input.PlaceId)
+	uc.BloomFilter.Add(newPlace.ID.String())
 
 	return nil
 }

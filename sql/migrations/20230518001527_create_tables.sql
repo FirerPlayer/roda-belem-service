@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 );
 CREATE TABLE IF NOT EXISTS `places` (
   `id` varchar(36) NOT NULL PRIMARY KEY,
-  `place_id` varchar(8000),
+  `google_place_id` varchar(8000),
   `name` varchar(255),
   `formatted_address` varchar(255),
   `lat` float,
@@ -22,8 +22,7 @@ CREATE TABLE IF NOT EXISTS `places` (
   `types` JSON,
   `opening_periods` JSON,
   `photos` JSON,
-  `rating` float,
-  `accessibility_features` JSON
+  `rating` float
 );
 CREATE TABLE IF NOT EXISTS `reviews` (
   `id` VARCHAR(36) NOT NULL PRIMARY KEY,
@@ -44,11 +43,16 @@ CREATE TABLE IF NOT EXISTS `favorites` (
   FOREIGN KEY (place_id) REFERENCES places (id) ON DELETE CASCADE,
   FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
--- +goose StatementEnd
+CREATE TABLE IF NOT EXISTS `accessibility_features` (
+  `review_id` varchar(36),
+  `feature` varchar(255),
+  FOREIGN KEY (review_id) REFERENCES reviews (id) ON DELETE CASCADE
+) -- +goose StatementEnd
 -- +goose Down
 -- +goose StatementBegin
 DROP TABLE IF EXISTS `favorites`;
 DROP TABLE IF EXISTS `reviews`;
 DROP TABLE IF EXISTS `places`;
 DROP TABLE IF EXISTS `users`;
+DROP TABLE IF EXISTS `accessibility_features`;
 -- +goose StatementEnd

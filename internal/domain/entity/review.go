@@ -40,28 +40,50 @@ func NewPhoto(data []byte, description string) *Photo {
 	}
 }
 
+type AccessibilityFeaturesEnum int
+
+const (
+	Ramp = iota
+	Elevator
+	AdaptedBathroom
+	BrailleSignage
+	WideCirculationAreas
+	ReservedParking
+	TactilePaving
+	AdaptedTelephones
+	VideoIntercom
+	AdaptedTablesCounters
+	WheelchairAvailability
+	SignLanguageCommunication
+	GuideDogAllowed
+	OnlineAccessibility
+	AssistiveTechnologyAccess
+)
+
 type Review struct {
-	ID        uuid.UUID
-	PlaceID   string
-	UserID    string
-	Text      string
-	Photos    []Photo
-	Rating    float64
-	Reactions []Reaction
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID                    uuid.UUID
+	PlaceID               string
+	UserID                string
+	Text                  string
+	Photos                []Photo
+	Rating                float64
+	Reactions             []Reaction
+	AccessibilityFeatures []AccessibilityFeaturesEnum
+	CreatedAt             time.Time
+	UpdatedAt             time.Time
 }
 
 func NewReview(placeID, userID, text string, photos []Photo, rating float64, reactions []Reaction) *Review {
 	return &Review{
-		ID:        uuid.New(),
-		PlaceID:   placeID,
-		UserID:    userID,
-		Text:      text,
-		Photos:    photos,
-		Rating:    rating,
-		Reactions: reactions,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		ID:                    uuid.New(),
+		PlaceID:               placeID,
+		UserID:                userID,
+		Text:                  text,
+		Photos:                photos,
+		Rating:                rating,
+		Reactions:             reactions,
+		AccessibilityFeatures: []AccessibilityFeaturesEnum{},
+		CreatedAt:             time.Now(),
+		UpdatedAt:             time.Now(),
 	}
 }
