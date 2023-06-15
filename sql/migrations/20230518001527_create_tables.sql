@@ -22,7 +22,9 @@ CREATE TABLE IF NOT EXISTS `places` (
   `types` JSON,
   `opening_periods` JSON,
   `photos` JSON,
-  `rating` float
+  `rating` float,
+  `created_at` datetime,
+  `updated_at` datetime
 );
 CREATE TABLE IF NOT EXISTS `reviews` (
   `id` VARCHAR(36) NOT NULL PRIMARY KEY,

@@ -1,7 +1,7 @@
 package dto
 
 import (
-	"github.com/firerplayer/hexagonal-arch-go/internal/domain/entity"
+	"github.com/firerplayer/roda-belem-service/internal/domain/entity"
 )
 
 type CreatePlaceInputDTO struct {

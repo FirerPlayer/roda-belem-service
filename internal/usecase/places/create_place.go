@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 
-	"github.com/firerplayer/hexagonal-arch-go/internal/domain/entity"
-	"github.com/firerplayer/hexagonal-arch-go/internal/domain/gateway"
-	"github.com/firerplayer/hexagonal-arch-go/internal/infra/blooms"
-	"github.com/firerplayer/hexagonal-arch-go/internal/usecase/dto"
+	"github.com/firerplayer/roda-belem-service/internal/domain/entity"
+	"github.com/firerplayer/roda-belem-service/internal/domain/gateway"
+	"github.com/firerplayer/roda-belem-service/internal/infra/blooms"
+	"github.com/firerplayer/roda-belem-service/internal/usecase/dto"
 )
 
 type CreatePlaceUseCase struct {

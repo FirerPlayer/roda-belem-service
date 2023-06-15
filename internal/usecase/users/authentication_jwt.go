@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/firerplayer/hexagonal-arch-go/internal/domain/gateway"
-	"github.com/firerplayer/hexagonal-arch-go/internal/usecase/dto"
+	"github.com/firerplayer/roda-belem-service/internal/domain/gateway"
+	"github.com/firerplayer/roda-belem-service/internal/usecase/dto"
 	"golang.org/x/crypto/bcrypt"
 )
 

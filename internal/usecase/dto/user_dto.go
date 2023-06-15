@@ -3,8 +3,7 @@ package dto
 import (
 	"time"
 
-	"github.com/firerplayer/hexagonal-arch-go/internal/domain/entity"
-	"github.com/google/uuid"
+	"github.com/firerplayer/roda-belem-service/internal/domain/entity"
 )
 
 type CreateUserInputDTO struct {

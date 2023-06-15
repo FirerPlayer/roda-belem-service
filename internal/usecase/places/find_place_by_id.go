@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 
-	"github.com/firerplayer/hexagonal-arch-go/internal/domain/gateway"
-	"github.com/firerplayer/hexagonal-arch-go/internal/infra/blooms"
-	"github.com/firerplayer/hexagonal-arch-go/internal/usecase/dto"
+	"github.com/firerplayer/roda-belem-service/internal/domain/gateway"
+	"github.com/firerplayer/roda-belem-service/internal/infra/blooms"
+	"github.com/firerplayer/roda-belem-service/internal/usecase/dto"
 )
 
 type FindPlaceByIdUseCase struct {
@@ -29,7 +29,7 @@ func (u *FindPlaceByIdUseCase) Execute(ctx context.Context, input dto.FindPlaceB
 	return &dto.FindPlaceByIDOutputDTO{
 		ID:              place.ID.String(),
 		Name:            place.Name,
-		FormatedAddress: place.FormatedAddress,
+		FormatedAddress: place.FormattedAddress,
 		Lat:             place.Lat,
 		Lng:             place.Lng,
 		Icon:            place.Icon,

@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 
-	"github.com/firerplayer/hexagonal-arch-go/internal/domain/entity"
-	"github.com/firerplayer/hexagonal-arch-go/internal/domain/gateway"
-	"github.com/firerplayer/hexagonal-arch-go/internal/usecase/dto"
+	"github.com/firerplayer/roda-belem-service/internal/domain/entity"
+	"github.com/firerplayer/roda-belem-service/internal/domain/gateway"
+	"github.com/firerplayer/roda-belem-service/internal/usecase/dto"
 )
 
 type FindPlacesByAccessibilityFeaturesUseCase struct {
@@ -52,7 +52,7 @@ func (uc FindPlacesByAccessibilityFeaturesUseCase) Execute(ctx context.Context, 
 		output = append(output, &dto.FindPlacesByAccessibilityFeaturesOutputDTO{
 			ID:              place.ID.String(),
 			Name:            place.Name,
-			FormatedAddress: place.FormatedAddress,
+			FormatedAddress: place.FormattedAddress,
 			Lat:             place.Lat,
 			Lng:             place.Lng,
 			Icon:            place.Icon,

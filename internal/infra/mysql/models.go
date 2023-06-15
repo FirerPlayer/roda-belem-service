@@ -31,6 +31,8 @@ type Place struct {
 	OpeningPeriods   json.RawMessage
 	Photos           json.RawMessage
 	Rating           sql.NullFloat64
+	CreatedAt        sql.NullTime
+	UpdatedAt        sql.NullTime
 }
 
 type Review struct {

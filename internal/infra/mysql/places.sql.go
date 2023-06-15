@@ -70,7 +70,7 @@ func (q *Queries) DeletePlaceById(ctx context.Context) error {
 }
 
 const findPlaceByGooglePlaceId = `-- name: FindPlaceByGooglePlaceId :one
-SELECT id, google_place_id, name, formatted_address, lat, lng, icon, types, opening_periods, photos, rating
+SELECT id, google_place_id, name, formatted_address, lat, lng, icon, types, opening_periods, photos, rating, created_at, updated_at
 FROM places
 WHERE google_place_id = ?
 `
@@ -90,12 +90,14 @@ func (q *Queries) FindPlaceByGooglePlaceId(ctx context.Context, googlePlaceID sq
 		&i.OpeningPeriods,
 		&i.Photos,
 		&i.Rating,
+		&i.CreatedAt,
+		&i.UpdatedAt,
 	)
 	return i, err
 }
 
 const findPlaceById = `-- name: FindPlaceById :one
-SELECT id, google_place_id, name, formatted_address, lat, lng, icon, types, opening_periods, photos, rating
+SELECT id, google_place_id, name, formatted_address, lat, lng, icon, types, opening_periods, photos, rating, created_at, updated_at
 FROM places
 WHERE id = ?
 `
@@ -115,6 +117,8 @@ func (q *Queries) FindPlaceById(ctx context.Context, id string) (Place, error) {
 		&i.OpeningPeriods,
 		&i.Photos,
 		&i.Rating,
+		&i.CreatedAt,
+		&i.UpdatedAt,
 	)
 	return i, err
 }
@@ -164,7 +168,7 @@ func (q *Queries) FindPlacesByAccessibilityFeature(ctx context.Context, arg Find
 }
 
 const findPlacesNearby = `-- name: FindPlacesNearby :many
-SELECT id, google_place_id, name, formatted_address, lat, lng, icon, types, opening_periods, photos, rating
+SELECT id, google_place_id, name, formatted_address, lat, lng, icon, types, opening_periods, photos, rating, created_at, updated_at
 FROM places -- distance in meters
 WHERE ST_DISTANCE_SPHERE(POINT(lat, lng), POINT(?, ?)) <= ?
 `
@@ -196,6 +200,8 @@ func (q *Queries) FindPlacesNearby(ctx context.Context, arg FindPlacesNearbyPara
 			&i.OpeningPeriods,
 			&i.Photos,
 			&i.Rating,
+			&i.CreatedAt,
+			&i.UpdatedAt,
 		); err != nil {
 			return nil, err
 		}

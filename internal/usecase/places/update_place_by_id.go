@@ -5,9 +5,9 @@ import (
 	"errors"
 	"time"
 
-	"github.com/firerplayer/hexagonal-arch-go/internal/domain/entity"
-	"github.com/firerplayer/hexagonal-arch-go/internal/domain/gateway"
-	"github.com/firerplayer/hexagonal-arch-go/internal/usecase/dto"
+	"github.com/firerplayer/roda-belem-service/internal/domain/entity"
+	"github.com/firerplayer/roda-belem-service/internal/domain/gateway"
+	"github.com/firerplayer/roda-belem-service/internal/usecase/dto"
 )
 
 type UpdatePLaceByIDUseCase struct {
@@ -24,7 +24,7 @@ func (uc *UpdatePLaceByIDUseCase) Execute(ctx context.Context, input dto.UpdateP
 	err := uc.PlacesGateway.UpdatePlaceById(ctx, input.PlaceToUpadteID, &entity.Place{
 		GooglePlaceId:   input.GooglePlaceId,
 		Name:            input.Name,
-		FormatedAddress: input.FormatedAddress,
+		FormattedAddress: input.FormatedAddress,
 		Lat:             input.Lat,
 		Lng:             input.Lng,
 		Icon:            input.Icon,

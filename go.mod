@@ -1,6 +1,6 @@
-module github.com/firerplayer/hexagonal-arch-go
+module github.com/firerplayer/roda-belem-service
 
-go 1.20
+go 1.19
 
 require (
 	github.com/bits-and-blooms/bloom/v3 v3.4.0
