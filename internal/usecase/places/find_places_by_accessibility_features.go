@@ -19,28 +19,10 @@ func NewFindPlacesByAccessibilityFeaturesUseCase(placesGateway gateway.PlacesGat
 	}
 }
 
-var strToEnumMap = map[string]entity.AccessibilityFeaturesEnum{
-	"Ramp":                      entity.Ramp,
-	"Elevator":                  entity.Elevator,
-	"AdaptedBathroom":           entity.AdaptedBathroom,
-	"BrailleSignage":            entity.BrailleSignage,
-	"WideCirculationAreas":      entity.WideCirculationAreas,
-	"ReservedParking":           entity.ReservedParking,
-	"TactilePaving":             entity.TactilePaving,
-	"AdaptedTelephones":         entity.AdaptedTelephones,
-	"VideoIntercom":             entity.VideoIntercom,
-	"AdaptedTablesCounters":     entity.AdaptedTablesCounters,
-	"WheelchairAvailability":    entity.WheelchairAvailability,
-	"SignLanguageCommunication": entity.SignLanguageCommunication,
-	"GuideDogAllowed":           entity.GuideDogAllowed,
-	"OnlineAccessibility":       entity.OnlineAccessibility,
-	"AssistiveTechnologyAccess": entity.AssistiveTechnologyAccess,
-}
-
 func (uc FindPlacesByAccessibilityFeaturesUseCase) Execute(ctx context.Context, input dto.FindPlacesByAccessibilityFeaturesInputDTO) ([]*dto.FindPlacesByAccessibilityFeaturesOutputDTO, error) {
 	var af []entity.AccessibilityFeaturesEnum
 	for _, v := range input.AccessibilityFeatures {
-		af = append(af, strToEnumMap[v])
+		af = append(af, entity.AccessibilityFeaturesEnum(v))
 	}
 
 	places, err := uc.PlacesGateway.FindPlacesByAccessibilityFeatures(ctx, af)

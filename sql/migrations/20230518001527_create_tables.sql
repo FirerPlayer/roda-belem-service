@@ -49,7 +49,10 @@ CREATE TABLE IF NOT EXISTS `accessibility_features` (
   `review_id` varchar(36),
   `feature` varchar(255),
   FOREIGN KEY (review_id) REFERENCES reviews (id) ON DELETE CASCADE
-) -- +goose StatementEnd
+);
+
+
+ -- +goose StatementEnd
 -- +goose Down
 -- +goose StatementBegin
 DROP TABLE IF EXISTS `favorites`;

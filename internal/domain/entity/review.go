@@ -40,24 +40,24 @@ func NewPhoto(data []byte, description string) *Photo {
 	}
 }
 
-type AccessibilityFeaturesEnum int
+type AccessibilityFeaturesEnum string
 
 const (
-	Ramp = iota
-	Elevator
-	AdaptedBathroom
-	BrailleSignage
-	WideCirculationAreas
-	ReservedParking
-	TactilePaving
-	AdaptedTelephones
-	VideoIntercom
-	AdaptedTablesCounters
-	WheelchairAvailability
-	SignLanguageCommunication
-	GuideDogAllowed
-	OnlineAccessibility
-	AssistiveTechnologyAccess
+	Ramp                      = "Ramp"
+	Elevator                  = "Elevator"
+	AdaptedBathroom           = "AdaptedBathroom"
+	BrailleSignage            = "BrailleSignage"
+	WideCirculationAreas      = "WideCirculationAreas"
+	ReservedParking           = "ReservedParking"
+	TactilePaving             = "TactilePaving"
+	AdaptedTelephones         = "AdaptedTelephones"
+	VideoIntercom             = "VideoIntercom"
+	AdaptedTablesCounters     = "AdaptedTablesCounters"
+	WheelchairAvailability    = "WheelchairAvailability"
+	SignLanguageCommunication = "SignLanguageCommunication"
+	GuideDogAllowed           = "GuideDogAllowed"
+	OnlineAccessibility       = "OnlineAccessibility"
+	AssistiveTechnologyAccess = "AssistiveTechnologyAccess"
 )
 
 type Review struct {
