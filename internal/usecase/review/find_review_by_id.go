@@ -24,14 +24,15 @@ func (u *FindReviewByIdUseCase) Execute(ctx context.Context, input dto.FindRevie
 		return nil, errors.New("review not found: " + err.Error())
 	}
 	return &dto.FindReviewByIDOutputDTO{
-		ID:        review.ID.String(),
-		PlaceID:   review.PlaceID,
-		UserID:    review.UserID,
-		Text:      review.Text,
-		Photos:    review.Photos,
-		Rating:    review.Rating,
-		Reactions: review.Reactions,
-		CreatedAt: review.CreatedAt,
-		UpdatedAt: review.UpdatedAt,
+		ID:                    review.ID.String(),
+		PlaceID:               review.PlaceID,
+		UserID:                review.UserID,
+		Text:                  review.Text,
+		Photos:                review.Photos,
+		Rating:                review.Rating,
+		Reactions:             review.Reactions,
+		AccessibilityFeatures: review.AccessibilityFeatures,
+		CreatedAt:             review.CreatedAt,
+		UpdatedAt:             review.UpdatedAt,
 	}, nil
 }
