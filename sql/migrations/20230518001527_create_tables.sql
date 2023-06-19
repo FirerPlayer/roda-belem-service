@@ -30,10 +30,11 @@ CREATE TABLE IF NOT EXISTS `reviews` (
   `id` VARCHAR(36) NOT NULL PRIMARY KEY,
   `place_id` varchar(255),
   `user_id` varchar(255),
-  `text` varchar(255),
+  `content` varchar(255),
   `images` JSON,
   `rating` float,
   `reactions` JSON,
+  `accessibility_features` text,
   `created_at` datetime,
   `updated_at` datetime,
   FOREIGN KEY (place_id) REFERENCES places (id) ON DELETE CASCADE,
@@ -45,13 +46,6 @@ CREATE TABLE IF NOT EXISTS `favorites` (
   FOREIGN KEY (place_id) REFERENCES places (id) ON DELETE CASCADE,
   FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
-CREATE TABLE IF NOT EXISTS `accessibility_features` (
-  `review_id` varchar(36),
-  `feature` varchar(255),
-  FOREIGN KEY (review_id) REFERENCES reviews (id) ON DELETE CASCADE
-);
-
-
  -- +goose StatementEnd
 -- +goose Down
 -- +goose StatementBegin
@@ -59,5 +53,4 @@ DROP TABLE IF EXISTS `favorites`;
 DROP TABLE IF EXISTS `reviews`;
 DROP TABLE IF EXISTS `places`;
 DROP TABLE IF EXISTS `users`;
-DROP TABLE IF EXISTS `accessibility_features`;
 -- +goose StatementEnd

@@ -10,12 +10,12 @@ import (
 	"github.com/firerplayer/roda-belem-service/internal/usecase/dto"
 )
 
-type UpdateUserUseCase struct {
+type UpdateUserByIDUseCase struct {
 	UsersGateway gateway.UsersGateway
 }
 
-func NewUpdateUserUseCase(usersGateway gateway.UsersGateway) *UpdateUserUseCase {
-	return &UpdateUserUseCase{
+func NewUpdateUserUseCase(usersGateway gateway.UsersGateway) *UpdateUserByIDUseCase {
+	return &UpdateUserByIDUseCase{
 		UsersGateway: usersGateway,
 	}
 }
@@ -25,7 +25,7 @@ func NewUpdateUserUseCase(usersGateway gateway.UsersGateway) *UpdateUserUseCase 
 // ctx is the context that the function executes under.
 // input is the input data for updating the user.
 // Returns an error if the update operation fails.
-func (uc *UpdateUserUseCase) Execute(ctx context.Context, input dto.UpdateUserInputDTO) error {
+func (uc *UpdateUserByIDUseCase) Execute(ctx context.Context, input dto.UpdateUserInputDTO) error {
 	err := uc.UsersGateway.UpdateUserById(ctx, input.UserId, &entity.User{
 		Email:     input.Email,
 		Avatar:    input.Avatar,

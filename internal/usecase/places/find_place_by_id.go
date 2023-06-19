@@ -9,19 +9,19 @@ import (
 	"github.com/firerplayer/roda-belem-service/internal/usecase/dto"
 )
 
-type FindPlaceByIdUseCase struct {
+type FindPlaceByIDUseCase struct {
 	PlacesGateway gateway.PlacesGateway
 	BloomFilter   *blooms.BloomFilter
 }
 
-func NewFindPlaceByIdUseCase(placesGateway gateway.PlacesGateway, bloomFilter *blooms.BloomFilter) *FindPlaceByIdUseCase {
-	return &FindPlaceByIdUseCase{
+func NewFindPlaceByIdUseCase(placesGateway gateway.PlacesGateway, bloomFilter *blooms.BloomFilter) *FindPlaceByIDUseCase {
+	return &FindPlaceByIDUseCase{
 		PlacesGateway: placesGateway,
 		BloomFilter:   bloomFilter,
 	}
 }
 
-func (u *FindPlaceByIdUseCase) Execute(ctx context.Context, input dto.FindPlaceByIDInputDTO) (*dto.FindPlaceByIDOutputDTO, error) {
+func (u *FindPlaceByIDUseCase) Execute(ctx context.Context, input dto.FindPlaceByIDInputDTO) (*dto.FindPlaceByIDOutputDTO, error) {
 	place, err := u.PlacesGateway.FindPlaceById(ctx, input.ID)
 	if err != nil {
 		return nil, errors.New("place not found: " + err.Error())

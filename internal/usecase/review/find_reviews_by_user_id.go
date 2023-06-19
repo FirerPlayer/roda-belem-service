@@ -18,8 +18,8 @@ func NewFindReviewsByUserIDUseCase(reviewsGateway gateway.ReviewsGateway) *FindR
 	}
 }
 
-func (uc *FindReviewsByUserIDUseCase) Execute(ctx context.Context, input *dto.FindReviewsByUserIDInputDTO) ([]*dto.FindReviewsByUserIDOutputDTO, error) {
-	reviews, err := uc.ReviewsGateway.FindReviewsByUserId(ctx, input.UserID)
+func (uc *FindReviewsByUserIDUseCase) Execute(ctx context.Context, input dto.FindReviewsByUserIDInputDTO) ([]*dto.FindReviewsByUserIDOutputDTO, error) {
+	reviews, err := uc.ReviewsGateway.FindReviewsByPlaceID(ctx, input.UserID, input.Limit, input.Offset)
 	if err != nil {
 		return nil, errors.New("review not found: " + err.Error())
 	}
@@ -29,7 +29,7 @@ func (uc *FindReviewsByUserIDUseCase) Execute(ctx context.Context, input *dto.Fi
 			ID:                    review.ID.String(),
 			PlaceID:               review.PlaceID,
 			UserID:                review.UserID,
-			Text:                  review.Text,
+			Text:                  review.Content,
 			Photos:                review.Photos,
 			Rating:                review.Rating,
 			Reactions:             review.Reactions,

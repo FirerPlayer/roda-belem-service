@@ -8,18 +8,18 @@ import (
 	"github.com/firerplayer/roda-belem-service/internal/usecase/dto"
 )
 
-type FindReviewByIdUseCase struct {
+type FindReviewByIDUseCase struct {
 	ReviewGateway gateway.ReviewsGateway
 }
 
-func NewFindReviewByIdUseCase(reviewGateway gateway.ReviewsGateway) *FindReviewByIdUseCase {
-	return &FindReviewByIdUseCase{
+func NewFindReviewByIdUseCase(reviewGateway gateway.ReviewsGateway) *FindReviewByIDUseCase {
+	return &FindReviewByIDUseCase{
 		ReviewGateway: reviewGateway,
 	}
 }
 
-func (u *FindReviewByIdUseCase) Execute(ctx context.Context, input dto.FindReviewByIDInputDTO) (*dto.FindReviewByIDOutputDTO, error) {
-	review, err := u.ReviewGateway.FindReviewById(ctx, input.Id)
+func (u *FindReviewByIDUseCase) Execute(ctx context.Context, input dto.FindReviewByIDInputDTO) (*dto.FindReviewByIDOutputDTO, error) {
+	review, err := u.ReviewGateway.FindReviewByID(ctx, input.Id)
 	if err != nil {
 		return nil, errors.New("review not found: " + err.Error())
 	}
@@ -27,7 +27,7 @@ func (u *FindReviewByIdUseCase) Execute(ctx context.Context, input dto.FindRevie
 		ID:                    review.ID.String(),
 		PlaceID:               review.PlaceID,
 		UserID:                review.UserID,
-		Text:                  review.Text,
+		Text:                  review.Content,
 		Photos:                review.Photos,
 		Rating:                review.Rating,
 		Reactions:             review.Reactions,

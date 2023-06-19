@@ -11,31 +11,49 @@ import (
 	"encoding/json"
 )
 
+const addAccessibilityFeatureByReviewID = `-- name: AddAccessibilityFeatureByReviewID :exec
+UPDATE reviews
+SET accessibility_features = CONCAT(accessibility_features, ',', ?)
+WHERE id = ?
+`
+
+type AddAccessibilityFeatureByReviewIDParams struct {
+	CONCAT interface{}
+	ID     string
+}
+
+func (q *Queries) AddAccessibilityFeatureByReviewID(ctx context.Context, arg AddAccessibilityFeatureByReviewIDParams) error {
+	_, err := q.db.ExecContext(ctx, addAccessibilityFeatureByReviewID, arg.CONCAT, arg.ID)
+	return err
+}
+
 const createReview = `-- name: CreateReview :exec
 INSERT INTO reviews (
     id,
     place_id,
     user_id,
-    text,
+    content,
     images,
     rating,
     reactions,
+    accessibility_features,
     created_at,
     updated_at
   )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 `
 
 type CreateReviewParams struct {
-	ID        string
-	PlaceID   sql.NullString
-	UserID    sql.NullString
-	Text      sql.NullString
-	Images    json.RawMessage
-	Rating    sql.NullFloat64
-	Reactions json.RawMessage
-	CreatedAt sql.NullTime
-	UpdatedAt sql.NullTime
+	ID                    string
+	PlaceID               sql.NullString
+	UserID                sql.NullString
+	Content               sql.NullString
+	Images                json.RawMessage
+	Rating                sql.NullFloat64
+	Reactions             json.RawMessage
+	AccessibilityFeatures sql.NullString
+	CreatedAt             sql.NullTime
+	UpdatedAt             sql.NullTime
 }
 
 func (q *Queries) CreateReview(ctx context.Context, arg CreateReviewParams) error {
@@ -43,18 +61,29 @@ func (q *Queries) CreateReview(ctx context.Context, arg CreateReviewParams) erro
 		arg.ID,
 		arg.PlaceID,
 		arg.UserID,
-		arg.Text,
+		arg.Content,
 		arg.Images,
 		arg.Rating,
 		arg.Reactions,
+		arg.AccessibilityFeatures,
 		arg.CreatedAt,
 		arg.UpdatedAt,
 	)
 	return err
 }
 
+const deleteReviewById = `-- name: DeleteReviewById :exec
+DELETE FROM reviews
+WHERE id = ?
+`
+
+func (q *Queries) DeleteReviewById(ctx context.Context, id string) error {
+	_, err := q.db.ExecContext(ctx, deleteReviewById, id)
+	return err
+}
+
 const findReviewById = `-- name: FindReviewById :one
-SELECT id, place_id, user_id, text, images, rating, reactions, created_at, updated_at
+SELECT id, place_id, user_id, content, images, rating, reactions, accessibility_features, created_at, updated_at
 FROM reviews
 WHERE id = ?
 `
@@ -66,10 +95,11 @@ func (q *Queries) FindReviewById(ctx context.Context, id string) (Review, error)
 		&i.ID,
 		&i.PlaceID,
 		&i.UserID,
-		&i.Text,
+		&i.Content,
 		&i.Images,
 		&i.Rating,
 		&i.Reactions,
+		&i.AccessibilityFeatures,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -77,13 +107,21 @@ func (q *Queries) FindReviewById(ctx context.Context, id string) (Review, error)
 }
 
 const findReviewsByPlaceId = `-- name: FindReviewsByPlaceId :many
-SELECT id, place_id, user_id, text, images, rating, reactions, created_at, updated_at
+SELECT id, place_id, user_id, content, images, rating, reactions, accessibility_features, created_at, updated_at
 FROM reviews
 WHERE place_id = ?
+LIMIT ?
+OFFSET ?
 `
 
-func (q *Queries) FindReviewsByPlaceId(ctx context.Context, placeID sql.NullString) ([]Review, error) {
-	rows, err := q.db.QueryContext(ctx, findReviewsByPlaceId, placeID)
+type FindReviewsByPlaceIdParams struct {
+	PlaceID sql.NullString
+	Limit   int32
+	Offset  int32
+}
+
+func (q *Queries) FindReviewsByPlaceId(ctx context.Context, arg FindReviewsByPlaceIdParams) ([]Review, error) {
+	rows, err := q.db.QueryContext(ctx, findReviewsByPlaceId, arg.PlaceID, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -95,10 +133,11 @@ func (q *Queries) FindReviewsByPlaceId(ctx context.Context, placeID sql.NullStri
 			&i.ID,
 			&i.PlaceID,
 			&i.UserID,
-			&i.Text,
+			&i.Content,
 			&i.Images,
 			&i.Rating,
 			&i.Reactions,
+			&i.AccessibilityFeatures,
 			&i.CreatedAt,
 			&i.UpdatedAt,
 		); err != nil {
@@ -115,14 +154,22 @@ func (q *Queries) FindReviewsByPlaceId(ctx context.Context, placeID sql.NullStri
 	return items, nil
 }
 
-const findReviewsByUserId = `-- name: FindReviewsByUserId :many
-SELECT id, place_id, user_id, text, images, rating, reactions, created_at, updated_at
+const findReviewsByUserID = `-- name: FindReviewsByUserID :many
+SELECT id, place_id, user_id, content, images, rating, reactions, accessibility_features, created_at, updated_at
 FROM reviews
 WHERE user_id = ?
+LIMIT ?
+OFFSET ?
 `
 
-func (q *Queries) FindReviewsByUserId(ctx context.Context, userID sql.NullString) ([]Review, error) {
-	rows, err := q.db.QueryContext(ctx, findReviewsByUserId, userID)
+type FindReviewsByUserIDParams struct {
+	UserID sql.NullString
+	Limit  int32
+	Offset int32
+}
+
+func (q *Queries) FindReviewsByUserID(ctx context.Context, arg FindReviewsByUserIDParams) ([]Review, error) {
+	rows, err := q.db.QueryContext(ctx, findReviewsByUserID, arg.UserID, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -134,10 +181,11 @@ func (q *Queries) FindReviewsByUserId(ctx context.Context, userID sql.NullString
 			&i.ID,
 			&i.PlaceID,
 			&i.UserID,
-			&i.Text,
+			&i.Content,
 			&i.Images,
 			&i.Rating,
 			&i.Reactions,
+			&i.AccessibilityFeatures,
 			&i.CreatedAt,
 			&i.UpdatedAt,
 		); err != nil {
@@ -152,4 +200,38 @@ func (q *Queries) FindReviewsByUserId(ctx context.Context, userID sql.NullString
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateReviewById = `-- name: UpdateReviewById :exec
+UPDATE reviews
+SET content = ?,
+  images = ?,
+  rating = ?,
+  reactions = ?,
+  accessibility_features = ?,
+  updated_at = ?
+WHERE id = ?
+`
+
+type UpdateReviewByIdParams struct {
+	Content               sql.NullString
+	Images                json.RawMessage
+	Rating                sql.NullFloat64
+	Reactions             json.RawMessage
+	AccessibilityFeatures sql.NullString
+	UpdatedAt             sql.NullTime
+	ID                    string
+}
+
+func (q *Queries) UpdateReviewById(ctx context.Context, arg UpdateReviewByIdParams) error {
+	_, err := q.db.ExecContext(ctx, updateReviewById,
+		arg.Content,
+		arg.Images,
+		arg.Rating,
+		arg.Reactions,
+		arg.AccessibilityFeatures,
+		arg.UpdatedAt,
+		arg.ID,
+	)
+	return err
 }

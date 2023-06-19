@@ -9,7 +9,6 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"strings"
 )
 
 const createPlace = `-- name: CreatePlace :exec
@@ -124,60 +123,25 @@ func (q *Queries) FindPlaceById(ctx context.Context, id string) (Place, error) {
 	return i, err
 }
 
-const findPlacesByAccessibilityFeatures = `-- name: FindPlacesByAccessibilityFeatures :many
-SELECT p.id, p.name, p.formatted_address, p.lat, p.lng, p.icon, p.types, p.opening_periods, p.photos, p.rating, p.created_at, p.updated_at,
-  COUNT(*) AS num_reviews
+const findPlacesByAccessibilityFeature = `-- name: FindPlacesByAccessibilityFeature :many
+SELECT p.id, p.google_place_id, p.name, p.formatted_address, p.lat, p.lng, p.icon, p.types, p.opening_periods, p.photos, p.rating, p.created_at, p.updated_at
 FROM places p
-  JOIN reviews r ON p.id = r.place_id
-  JOIN accessibility_features af ON r.review_id = af.review_id
-WHERE af.feature IN (/*SLICE:features*/?)
-GROUP BY p.id
-HAVING COUNT(DISTINCT af.feature) = ?
+JOIN reviews r ON p.id = r.place_id
+WHERE FIND_IN_SET(?, r.accessibilityFeatures) > 0
 `
 
-type FindPlacesByAccessibilityFeaturesParams struct {
-	Features    []sql.NullString
-	NumFeatures sql.NullInt16
-}
-
-type FindPlacesByAccessibilityFeaturesRow struct {
-	ID               string
-	Name             sql.NullString
-	FormattedAddress sql.NullString
-	Lat              sql.NullFloat64
-	Lng              sql.NullFloat64
-	Icon             sql.NullString
-	Types            json.RawMessage
-	OpeningPeriods   json.RawMessage
-	Photos           json.RawMessage
-	Rating           sql.NullFloat64
-	CreatedAt        sql.NullTime
-	UpdatedAt        sql.NullTime
-	NumReviews       int64
-}
-
-func (q *Queries) FindPlacesByAccessibilityFeatures(ctx context.Context, arg FindPlacesByAccessibilityFeaturesParams) ([]FindPlacesByAccessibilityFeaturesRow, error) {
-	sql := findPlacesByAccessibilityFeatures
-	var queryParams []interface{}
-	if len(arg.Features) > 0 {
-		for _, v := range arg.Features {
-			queryParams = append(queryParams, v)
-		}
-		sql = strings.Replace(sql, "/*SLICE:features*/?", strings.Repeat(",?", len(arg.Features))[1:], 1)
-	} else {
-		sql = strings.Replace(sql, "/*SLICE:features*/?", "NULL", 1)
-	}
-	queryParams = append(queryParams, arg.NumFeatures)
-	rows, err := q.db.QueryContext(ctx, sql, queryParams...)
+func (q *Queries) FindPlacesByAccessibilityFeature(ctx context.Context, findINSET string) ([]Place, error) {
+	rows, err := q.db.QueryContext(ctx, findPlacesByAccessibilityFeature, findINSET)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []FindPlacesByAccessibilityFeaturesRow
+	var items []Place
 	for rows.Next() {
-		var i FindPlacesByAccessibilityFeaturesRow
+		var i Place
 		if err := rows.Scan(
 			&i.ID,
+			&i.GooglePlaceID,
 			&i.Name,
 			&i.FormattedAddress,
 			&i.Lat,
@@ -189,7 +153,6 @@ func (q *Queries) FindPlacesByAccessibilityFeatures(ctx context.Context, arg Fin
 			&i.Rating,
 			&i.CreatedAt,
 			&i.UpdatedAt,
-			&i.NumReviews,
 		); err != nil {
 			return nil, err
 		}

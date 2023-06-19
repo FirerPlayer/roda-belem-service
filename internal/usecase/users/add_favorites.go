@@ -29,7 +29,7 @@ func (uc *AddFavoritesUseCase) Execute(ctx context.Context, input dto.AddFavorit
 		return errors.New("Place not found " + err.Error())
 	}
 
-	err = uc.UsersGateway.AddFavoritePlaceByUserId(ctx, input.UserId, input.PlaceId)
+	err = uc.UsersGateway.AddFavoriteByUserIdAndPlaceId(ctx, input.UserId, input.PlaceId)
 	if err != nil {
 		return errors.New("Failed to add favorite place " + err.Error())
 	}

@@ -25,8 +25,11 @@ func NewCreateUserUsecase(usersGateway gateway.UsersGateway) *CreateUserUsecase 
 // input is a CreateUserInputDTO struct containing the information of the user to be created.
 // error is returned if there are any issues creating the user.
 func (uc *CreateUserUsecase) Execute(ctx context.Context, input dto.CreateUserInputDTO) error {
-	newUser := entity.NewUser(input.Email, input.Username, input.Password)
-	err := uc.UsersGateway.CreateUser(ctx, newUser)
+	newUser, err := entity.NewUser(input.Email, input.Username, input.Password)
+	if err != nil {
+		return errors.New("failed to create user " + err.Error())
+	}
+	err = uc.UsersGateway.CreateUser(ctx, newUser)
 	if err != nil {
 		return errors.New("failed to create user " + err.Error())
 	}

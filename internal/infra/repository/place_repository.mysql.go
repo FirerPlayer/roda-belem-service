@@ -26,8 +26,7 @@ func NewPlaceRepositoryMySQL(dbt *sql.DB) *PlaceRepositoryMySQL {
 type PlacesGateway interface {
 	Create(ctx context.Context, place *entity.Place) error
 	FindPlaceById(ctx context.Context, id string) (*entity.Place, error)
-
-	FindPlacesByAccessibilityFeatures(ctx context.Context, features []entity.AccessibilityFeaturesEnum) ([]*entity.Place, error)
+	FindPlacesByAccessibilityFeature(ctx context.Context, feature string) ([]*entity.Place, error)
 	FindNearbyPlaces(ctx context.Context, latitude float64, longitude float64, radius float64) ([]*entity.Place, error)
 	UpdatePlaceById(ctx context.Context, id string, place *entity.Place) error
 	DeletePlaceById(ctx context.Context, id string) error
@@ -73,56 +72,29 @@ func (p *PlaceRepositoryMySQL) FindPlaceById(ctx context.Context, id string) (*e
 	if err != nil {
 		return nil, err
 	}
-	place := &entity.Place{}
-	place.ID = uuid.MustParse(placeDb.ID)
-	place.GooglePlaceId = placeDb.GooglePlaceID.String
-	place.Name = placeDb.Name.String
-	place.FormattedAddress = placeDb.FormattedAddress.String
-	place.Lat = placeDb.Lat.Float64
-	place.Lng = placeDb.Lng.Float64
-	place.Icon = placeDb.Icon.String
-	json.Unmarshal(placeDb.Types, &place.Types)
-	json.Unmarshal(placeDb.OpeningPeriods, &place.OpeningPeriods)
-	json.Unmarshal(placeDb.Photos, &place.Photos)
-	place.Rating = placeDb.Rating.Float64
-	place.CreatedAt = placeDb.CreatedAt.Time
-	place.UpdatedAt = placeDb.UpdatedAt.Time
+	var place entity.Place
+	err = HydratePlace(placeDb, &place)
+	if err != nil {
+		return nil, err
+	}
 
-	return place, nil
+	return &place, nil
 
 }
 
-func (p *PlaceRepositoryMySQL) FindPlacesByAccessibilityFeatures(ctx context.Context, features []entity.AccessibilityFeaturesEnum) ([]*entity.Place, error) {
-	var f []sql.NullString
-	for _, feature := range features {
-		f = append(f, sql.NullString{String: string(feature)})
-	}
-
-	params := db.FindPlacesByAccessibilityFeaturesParams{
-		Features:    f,
-		NumFeatures: sql.NullInt16{Int16: int16(len(features))},
-	}
-	places, err := p.Queries.FindPlacesByAccessibilityFeatures(ctx, params)
+func (p *PlaceRepositoryMySQL) FindPlacesByAccessibilityFeature(ctx context.Context, feature string) ([]*entity.Place, error) {
+	placesDb, err := p.Queries.FindPlacesByAccessibilityFeature(ctx, feature)
 	if err != nil {
 		return nil, err
 	}
 	var output []*entity.Place
-	for _, result := range places {
-		place := &entity.Place{}
-		place.ID = uuid.MustParse(result.ID)
-		place.Name = result.Name.String
-		place.FormattedAddress = result.FormattedAddress.String
-		place.Lat = result.Lat.Float64
-		place.Lng = result.Lng.Float64
-		place.Icon = result.Icon.String
-		json.Unmarshal(result.Types, &place.Types)
-		json.Unmarshal(result.OpeningPeriods, &place.OpeningPeriods)
-		json.Unmarshal(result.Photos, &place.Photos)
-		place.Rating = result.Rating.Float64
-		place.CreatedAt = result.CreatedAt.Time
-		place.UpdatedAt = result.UpdatedAt.Time
-
-		output = append(output, place)
+	for _, placeDb := range placesDb {
+		var place entity.Place
+		err := HydratePlace(placeDb, &place)
+		if err != nil {
+			return nil, err
+		}
+		output = append(output, &place)
 	}
 
 	return output, nil
@@ -140,20 +112,13 @@ func (p *PlaceRepositoryMySQL) FindNearbyPlaces(ctx context.Context, latitude fl
 		return nil, err
 	}
 	var output []*entity.Place
-	for _, result := range places {
-		place := &entity.Place{}
-		place.ID = uuid.MustParse(result.ID)
-		place.Name = result.Name.String
-		place.FormattedAddress = result.FormattedAddress.String
-		place.Lat = result.Lat.Float64
-		place.Lng = result.Lng.Float64
-		place.Icon = result.Icon.String
-		json.Unmarshal(result.Types, &place.Types)
-		json.Unmarshal(result.OpeningPeriods, &place.OpeningPeriods)
-		json.Unmarshal(result.Photos, &place.Photos)
-		place.Rating = result.Rating.Float64
-		place.CreatedAt = result.CreatedAt.Time
-		place.UpdatedAt = result.UpdatedAt.Time
+	for _, pl := range places {
+		var place entity.Place
+		err := HydratePlace(pl, &place)
+		if err != nil {
+			return nil, err
+		}
+		output = append(output, &place)
 	}
 	return output, nil
 }
@@ -195,5 +160,36 @@ func (p *PlaceRepositoryMySQL) DeletePlaceById(ctx context.Context, id string) e
 	if err := p.Queries.DeletePlaceById(ctx, id); err != nil {
 		return err
 	}
+	return nil
+}
+
+// HydratePlace hydrates a Place entity with data from a Place database object.
+//
+// placeDb: The Place database object to hydrate from.
+// place: The Place entity to hydrate.
+// error: Returns an error if there was a problem with hydrating the Place entity.
+func HydratePlace(placeDb db.Place, place *entity.Place) error {
+	place.ID = uuid.MustParse(placeDb.ID)
+	place.GooglePlaceId = placeDb.GooglePlaceID.String
+	place.Name = placeDb.Name.String
+	place.FormattedAddress = placeDb.FormattedAddress.String
+	place.Lat = placeDb.Lat.Float64
+	place.Lng = placeDb.Lng.Float64
+	place.Icon = placeDb.Icon.String
+	err := json.Unmarshal(placeDb.Types, &place.Types)
+	if err != nil {
+		return err
+	}
+	err = json.Unmarshal(placeDb.OpeningPeriods, &place.OpeningPeriods)
+	if err != nil {
+		return err
+	}
+	err = json.Unmarshal(placeDb.Photos, &place.Photos)
+	if err != nil {
+		return err
+	}
+	place.Rating = placeDb.Rating.Float64
+	place.CreatedAt = placeDb.CreatedAt.Time
+	place.UpdatedAt = placeDb.UpdatedAt.Time
 	return nil
 }

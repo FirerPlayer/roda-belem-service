@@ -41,12 +41,8 @@ WHERE id = ?;
 -- name: DeletePlaceById :exec
 DELETE FROM places
 WHERE id = ?;
--- name: FindPlacesByAccessibilityFeatures :many
-SELECT p.id, p.name, p.formatted_address, p.lat, p.lng, p.icon, p.types, p.opening_periods, p.photos, p.rating, p.created_at, p.updated_at,
-  COUNT(*) AS num_reviews
+-- name: FindPlacesByAccessibilityFeature :many
+SELECT p.*
 FROM places p
-  JOIN reviews r ON p.id = r.place_id
-  JOIN accessibility_features af ON r.review_id = af.review_id
-WHERE af.feature IN (sqlc.slice('features'))
-GROUP BY p.id
-HAVING COUNT(DISTINCT af.feature) = sqlc.arg('num_features');
+JOIN reviews r ON p.id = r.place_id
+WHERE FIND_IN_SET(?, r.accessibilityFeatures) > 0;

@@ -65,3 +65,16 @@ type AddFavoritesInputDTO struct {
 type DeleteUserByIdInputDTO struct {
 	UserId string `json:"userId"`
 }
+
+type DeleteFavoriteByUserIdAndPlaceIdInputDTO struct {
+	UserId  string `json:"userId"`
+	PlaceId string `json:"placeId"`
+}
+
+type FindFavoritesByUserIdInputDTO struct {
+	UserId string `json:"userId"`
+}
+
+type FindFavoritesByUserIdOutputDTO struct {
+	PlaceId string `json:"placeId"`
+}

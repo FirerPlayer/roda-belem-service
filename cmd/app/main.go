@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
+	"github.com/firerplayer/roda-belem-service/internal/domain/entity"
 	"github.com/joho/godotenv"
 )
 
@@ -19,24 +21,14 @@ import (
 // )
 
 func main() {
-	LoadEnv()
-	// db, err := sql.Open("mysql", "root:root@tcp(host.docker.internal:3306)")
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// defer db.Close()
-
-	// repo := repository.NewProductRepositoryMysql(db)
-	// createProductUseCase := usecase.NewCreateProductUseCase(repo)
-	// listProductsUseCase := usecase.NewListProductsUseCase(repo)
-
-	// // Web
-	// productHandlers := web.NewProductHandlers(createProductUseCase, listProductsUseCase)
-	// r := chi.NewRouter()
-	// r.Post("/products", productHandlers.CreateProduct)
-	// r.Get("/products/all", productHandlers.ListProducts)
-
-	// go http.ListenAndServe(":8000", r)
+	// LoadEnv()
+	user, err := entity.NewUser("email", "username", "password1234")
+	if err != nil {
+		log.Fatalf("Falha ao criar o usuário: %v", err)
+	}
+	fmt.Println(user.Email)
+	fmt.Println(user.Username)
+	fmt.Println(user.Password)
 
 }
 
@@ -45,4 +37,5 @@ func LoadEnv() {
 	if err != nil {
 		log.Fatalf("Falha ao carregar o arquivo .env: %v", err)
 	}
+	log.Println("Arquivo .env carregado")
 }

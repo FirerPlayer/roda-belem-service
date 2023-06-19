@@ -9,11 +9,6 @@ import (
 	"encoding/json"
 )
 
-type AccessibilityFeature struct {
-	ReviewID sql.NullString
-	Feature  sql.NullString
-}
-
 type Favorite struct {
 	PlaceID sql.NullString
 	UserID  sql.NullString
@@ -36,15 +31,16 @@ type Place struct {
 }
 
 type Review struct {
-	ID        string
-	PlaceID   sql.NullString
-	UserID    sql.NullString
-	Text      sql.NullString
-	Images    json.RawMessage
-	Rating    sql.NullFloat64
-	Reactions json.RawMessage
-	CreatedAt sql.NullTime
-	UpdatedAt sql.NullTime
+	ID                    string
+	PlaceID               sql.NullString
+	UserID                sql.NullString
+	Content               sql.NullString
+	Images                json.RawMessage
+	Rating                sql.NullFloat64
+	Reactions             json.RawMessage
+	AccessibilityFeatures sql.NullString
+	CreatedAt             sql.NullTime
+	UpdatedAt             sql.NullTime
 }
 
 type User struct {

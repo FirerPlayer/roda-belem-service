@@ -42,21 +42,24 @@ func (u *FindNearbyPlacesUseCase) GetNearbyPlacesFromGoogleMapsWithPersistence(c
 	}
 	var output []*entity.Place
 	for _, place := range response.Results {
-		newPlace := entity.NewPlace(
-			place.PlaceID,
-			place.Name,
-			place.FormattedAddress,
-			place.Geometry.Location.Lat,
-			place.Geometry.Location.Lng,
-			place.Icon, place.Types,
-			place.OpeningHours.WeekdayText,
-		)
-		err := u.PlacesGateway.Create(ctx, newPlace)
-		if err != nil {
-			return nil, errors.New("Failed to persist place while Google nearby search: " + err.Error())
+		if u.BloomFilter.NotContains(place.PlaceID) {
+			newPLace := entity.NewPlace(
+				place.PlaceID,
+				place.Name,
+				place.FormattedAddress,
+				place.Geometry.Location.Lat,
+				place.Geometry.Location.Lng,
+				place.Icon,
+				place.Types,
+				place.OpeningHours.WeekdayText,
+			)
+			err := u.PlacesGateway.Create(ctx, newPLace)
+			if err != nil {
+				return nil, errors.New("Failed to persist place while google maps nearby search: " + err.Error())
+			}
+			u.BloomFilter.Add(place.PlaceID)
+			output = append(output, newPLace)
 		}
-		u.BloomFilter.Add(newPlace.ID.String())
-		output = append(output, newPlace)
 	}
 
 	return output, nil

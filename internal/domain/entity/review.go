@@ -9,9 +9,9 @@ import (
 type ReactionEnum string
 
 const (
-	Like   ReactionEnum = "like"
-	Love   ReactionEnum = "love"
-	Thanks ReactionEnum = "thanks"
+	Like   ReactionEnum = "Like"
+	Love   ReactionEnum = "Love"
+	Thanks ReactionEnum = "Thanks"
 )
 
 type Reaction struct {
@@ -40,35 +40,35 @@ func NewPhoto(data []byte, description string) *Photo {
 	}
 }
 
-type AccessibilityFeaturesEnum string
+// type AccessibilityFeaturesEnum string
 
-const (
-	Ramp                      = "Ramp"
-	Elevator                  = "Elevator"
-	AdaptedBathroom           = "AdaptedBathroom"
-	BrailleSignage            = "BrailleSignage"
-	WideCirculationAreas      = "WideCirculationAreas"
-	ReservedParking           = "ReservedParking"
-	TactilePaving             = "TactilePaving"
-	AdaptedTelephones         = "AdaptedTelephones"
-	VideoIntercom             = "VideoIntercom"
-	AdaptedTablesCounters     = "AdaptedTablesCounters"
-	WheelchairAvailability    = "WheelchairAvailability"
-	SignLanguageCommunication = "SignLanguageCommunication"
-	GuideDogAllowed           = "GuideDogAllowed"
-	OnlineAccessibility       = "OnlineAccessibility"
-	AssistiveTechnologyAccess = "AssistiveTechnologyAccess"
-)
+// const (
+// 	Ramp                      = "Ramp"
+// 	Elevator                  = "Elevator"
+// 	AdaptedBathroom           = "AdaptedBathroom"
+// 	BrailleSignage            = "BrailleSignage"
+// 	WideCirculationAreas      = "WideCirculationAreas"
+// 	ReservedParking           = "ReservedParking"
+// 	TactilePaving             = "TactilePaving"
+// 	AdaptedTelephones         = "AdaptedTelephones"
+// 	VideoIntercom             = "VideoIntercom"
+// 	AdaptedTablesCounters     = "AdaptedTablesCounters"
+// 	WheelchairAvailability    = "WheelchairAvailability"
+// 	SignLanguageCommunication = "SignLanguageCommunication"
+// 	GuideDogAllowed           = "GuideDogAllowed"
+// 	OnlineAccessibility       = "OnlineAccessibility"
+// 	AssistiveTechnologyAccess = "AssistiveTechnologyAccess"
+// )
 
 type Review struct {
 	ID                    uuid.UUID
 	PlaceID               string
 	UserID                string
-	Text                  string
+	Content               string
 	Photos                []Photo
 	Rating                float64
 	Reactions             []Reaction
-	AccessibilityFeatures []AccessibilityFeaturesEnum
+	AccessibilityFeatures []string
 	CreatedAt             time.Time
 	UpdatedAt             time.Time
 }
@@ -78,11 +78,11 @@ func NewReview(placeID, userID, text string, photos []Photo, rating float64, rea
 		ID:                    uuid.New(),
 		PlaceID:               placeID,
 		UserID:                userID,
-		Text:                  text,
+		Content:               text,
 		Photos:                photos,
 		Rating:                rating,
 		Reactions:             reactions,
-		AccessibilityFeatures: []AccessibilityFeaturesEnum{},
+		AccessibilityFeatures: []string{},
 		CreatedAt:             time.Now(),
 		UpdatedAt:             time.Now(),
 	}

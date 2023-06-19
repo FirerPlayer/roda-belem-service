@@ -21,6 +21,12 @@ func (b *BloomFilter) Add(key string) {
 	b.Filter.Add([]byte(key))
 }
 
+func (b *BloomFilter) AddIfNotContains(key string) {
+	if b.NotContains(key) {
+		b.Add(key)
+	}
+}
+
 // NotContains checks if the BloomFilter does not contain the given key.
 //
 // key: string representation of the key to check.

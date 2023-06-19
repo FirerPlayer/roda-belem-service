@@ -4,34 +4,29 @@ import (
 	"context"
 	"errors"
 
-	"github.com/firerplayer/roda-belem-service/internal/domain/entity"
 	"github.com/firerplayer/roda-belem-service/internal/domain/gateway"
 	"github.com/firerplayer/roda-belem-service/internal/usecase/dto"
 )
 
-type FindPlacesByAccessibilityFeaturesUseCase struct {
+type FindPlacesByAccessibilityFeatureUseCase struct {
 	PlacesGateway gateway.PlacesGateway
 }
 
-func NewFindPlacesByAccessibilityFeaturesUseCase(placesGateway gateway.PlacesGateway) *FindPlacesByAccessibilityFeaturesUseCase {
-	return &FindPlacesByAccessibilityFeaturesUseCase{
+func NewFindPlacesByAccessibilityFeatureUseCase(placesGateway gateway.PlacesGateway) *FindPlacesByAccessibilityFeatureUseCase {
+	return &FindPlacesByAccessibilityFeatureUseCase{
 		PlacesGateway: placesGateway,
 	}
 }
 
-func (uc FindPlacesByAccessibilityFeaturesUseCase) Execute(ctx context.Context, input dto.FindPlacesByAccessibilityFeaturesInputDTO) ([]*dto.FindPlacesByAccessibilityFeaturesOutputDTO, error) {
-	var af []entity.AccessibilityFeaturesEnum
-	for _, v := range input.AccessibilityFeatures {
-		af = append(af, entity.AccessibilityFeaturesEnum(v))
-	}
+func (uc FindPlacesByAccessibilityFeatureUseCase) Execute(ctx context.Context, input dto.FindPlacesByAccessibilityFeatureInputDTO) ([]*dto.FindPlacesByAccessibilityFeatureOutputDTO, error) {
 
-	places, err := uc.PlacesGateway.FindPlacesByAccessibilityFeatures(ctx, af)
+	places, err := uc.PlacesGateway.FindPlacesByAccessibilityFeature(ctx, input.AccessibilityFeature)
 	if err != nil {
 		return nil, errors.New("failed to find places by accessibility features: " + err.Error())
 	}
-	var output []*dto.FindPlacesByAccessibilityFeaturesOutputDTO
+	var output []*dto.FindPlacesByAccessibilityFeatureOutputDTO
 	for _, place := range places {
-		output = append(output, &dto.FindPlacesByAccessibilityFeaturesOutputDTO{
+		output = append(output, &dto.FindPlacesByAccessibilityFeatureOutputDTO{
 			ID:              place.ID.String(),
 			Name:            place.Name,
 			FormatedAddress: place.FormattedAddress,

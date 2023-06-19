@@ -53,11 +53,11 @@ type FindPlaceByIDOutputDTO struct {
 	Reviews         []entity.Review `json:"reviews"`
 }
 
-type FindPlacesByAccessibilityFeaturesInputDTO struct {
-	AccessibilityFeatures []string `json:"accessibilityFeatures"`
+type FindPlacesByAccessibilityFeatureInputDTO struct {
+	AccessibilityFeature string `json:"accessibilityFeature"`
 }
 
-type FindPlacesByAccessibilityFeaturesOutputDTO struct {
+type FindPlacesByAccessibilityFeatureOutputDTO struct {
 	ID              string         `json:"id"`
 	Name            string         `json:"name"`
 	FormatedAddress string         `json:"formatedAddress"`

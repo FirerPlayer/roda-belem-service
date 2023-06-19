@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Mission struct {
@@ -37,15 +38,19 @@ type User struct {
 	UpdatedAt time.Time
 }
 
-func NewUser(email, username, password string) *User {
+func NewUser(email, username, password string) (*User, error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
 	return &User{
 		ID:        uuid.New(),
 		Email:     email,
 		Username:  username,
-		Password:  password,
+		Password:  string(hashedPassword),
 		Points:    0,
 		Missions:  []Mission{},
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
-	}
+	}, nil
 }

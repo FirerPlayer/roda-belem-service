@@ -25,41 +25,41 @@ func (q *Queries) CreateFavorite(ctx context.Context, arg CreateFavoriteParams) 
 	return err
 }
 
-const deleteFavorite = `-- name: DeleteFavorite :exec
+const deleteFavoriteByUserIdAndPlaceId = `-- name: DeleteFavoriteByUserIdAndPlaceId :exec
 DELETE FROM favorites
 WHERE user_id = ?
   AND place_id = ?
 `
 
-type DeleteFavoriteParams struct {
+type DeleteFavoriteByUserIdAndPlaceIdParams struct {
 	UserID  sql.NullString
 	PlaceID sql.NullString
 }
 
-func (q *Queries) DeleteFavorite(ctx context.Context, arg DeleteFavoriteParams) error {
-	_, err := q.db.ExecContext(ctx, deleteFavorite, arg.UserID, arg.PlaceID)
+func (q *Queries) DeleteFavoriteByUserIdAndPlaceId(ctx context.Context, arg DeleteFavoriteByUserIdAndPlaceIdParams) error {
+	_, err := q.db.ExecContext(ctx, deleteFavoriteByUserIdAndPlaceId, arg.UserID, arg.PlaceID)
 	return err
 }
 
 const findFavoritesByUserId = `-- name: FindFavoritesByUserId :many
-SELECT place_id, user_id
+SELECT place_id
 FROM favorites
 WHERE user_id = ?
 `
 
-func (q *Queries) FindFavoritesByUserId(ctx context.Context, userID sql.NullString) ([]Favorite, error) {
+func (q *Queries) FindFavoritesByUserId(ctx context.Context, userID sql.NullString) ([]sql.NullString, error) {
 	rows, err := q.db.QueryContext(ctx, findFavoritesByUserId, userID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Favorite
+	var items []sql.NullString
 	for rows.Next() {
-		var i Favorite
-		if err := rows.Scan(&i.PlaceID, &i.UserID); err != nil {
+		var place_id sql.NullString
+		if err := rows.Scan(&place_id); err != nil {
 			return nil, err
 		}
-		items = append(items, i)
+		items = append(items, place_id)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err
