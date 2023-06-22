@@ -6,6 +6,15 @@ import (
 	"github.com/firerplayer/roda-belem-service/internal/domain/entity"
 )
 
+type CreateReviewInputDTO struct {
+	PlaceId               string         `json:"placeId"`
+	UserID                string         `json:"userId"`
+	Content               string         `json:"content"`
+	Photos                []entity.Photo `json:"photos"`
+	Rating                float64        `json:"rating"`
+	AccessibilityFeatures []string       `json:"accessibilityFeatures"`
+}
+
 type FindReviewByIDInputDTO struct {
 	Id string
 }
@@ -14,7 +23,7 @@ type FindReviewByIDOutputDTO struct {
 	ID                    string            `json:"id"`
 	PlaceID               string            `json:"placeId"`
 	UserID                string            `json:"userId"`
-	Text                  string            `json:"text"`
+	Content               string            `json:"text"`
 	Photos                []entity.Photo    `json:"photos"`
 	Rating                float64           `json:"rating"`
 	Reactions             []entity.Reaction `json:"reactions"`
@@ -33,7 +42,7 @@ type FindReviewsByPlaceIDOutputDTO struct {
 	ID                    string            `json:"id"`
 	PlaceID               string            `json:"placeId"`
 	UserID                string            `json:"userId"`
-	Text                  string            `json:"text"`
+	Content               string            `json:"text"`
 	Photos                []entity.Photo    `json:"photos"`
 	Rating                float64           `json:"rating"`
 	Reactions             []entity.Reaction `json:"reactions"`
@@ -52,7 +61,7 @@ type FindReviewsByUserIDOutputDTO struct {
 	ID                    string            `json:"id"`
 	PlaceID               string            `json:"placeId"`
 	UserID                string            `json:"userId"`
-	Text                  string            `json:"text"`
+	Content               string            `json:"text"`
 	Photos                []entity.Photo    `json:"photos"`
 	Rating                float64           `json:"rating"`
 	Reactions             []entity.Reaction `json:"reactions"`

@@ -39,11 +39,12 @@ func (uc *AuthenticationJwtUseCase) Execute(ctx context.Context, input dto.Authe
 	if err != nil {
 		return nil, errors.New("invalid password " + err.Error())
 	}
+	exp_date := time.Now().Add(time.Hour * 24 * 365)
 
 	// Gera a assinatura JWT
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user_id": user.ID.String(),
-		"exp":     time.Now().Add(time.Hour * 24 * 365).Unix(),
+		"exp":     exp_date.Unix(),
 	})
 	tokenString, err := token.SignedString([]byte(os.Getenv("jtw_secret_key")))
 	if err != nil {
@@ -51,7 +52,8 @@ func (uc *AuthenticationJwtUseCase) Execute(ctx context.Context, input dto.Authe
 	}
 
 	return &dto.AuthenticateJwtUserOutputDTO{
-		Token: tokenString,
+		Token:     tokenString,
+		ExpiresAt: exp_date,
 	}, nil
 
 }

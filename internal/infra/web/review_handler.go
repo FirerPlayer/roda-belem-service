@@ -9,6 +9,7 @@ import (
 )
 
 type WebReviewHandler struct {
+	CreateReviewUseCase                      usecase.CreateReviewUsecase
 	FindReviewByIDUseCase                    usecase.FindReviewByIDUseCase
 	FindReviewsByPlaceIDUseCase              usecase.FincdReviewsByPlaceIDUseCase
 	FindReviewsByUserIDUseCase               usecase.FindReviewsByUserIDUseCase
@@ -18,6 +19,7 @@ type WebReviewHandler struct {
 }
 
 func NewWebReviewHandler(
+	createReviewUseCase usecase.CreateReviewUsecase,
 	findReviewByIDUseCase usecase.FindReviewByIDUseCase,
 	findReviewsByPlaceIDUseCase usecase.FincdReviewsByPlaceIDUseCase,
 	findReviewsByUserIDUseCase usecase.FindReviewsByUserIDUseCase,
@@ -26,6 +28,7 @@ func NewWebReviewHandler(
 	addAccessibilityFeatureByReviewIDUseCase usecase.AddAccessibilityFeaturesByReviewIDUseCase,
 ) *WebReviewHandler {
 	return &WebReviewHandler{
+		CreateReviewUseCase:                      createReviewUseCase,
 		FindReviewByIDUseCase:                    findReviewByIDUseCase,
 		FindReviewsByPlaceIDUseCase:              findReviewsByPlaceIDUseCase,
 		FindReviewsByUserIDUseCase:               findReviewsByUserIDUseCase,
@@ -33,6 +36,22 @@ func NewWebReviewHandler(
 		DeleteReviewByIDUseCase:                  deleteReviewByIDUseCase,
 		AddAccessibilityFeatureByReviewIDUseCase: addAccessibilityFeatureByReviewIDUseCase,
 	}
+}
+
+func (h *WebReviewHandler) CreateReview(w http.ResponseWriter, r *http.Request) {
+	var input dto.CreateReviewInputDTO
+	err := json.NewDecoder(r.Body).Decode(&input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	err = h.CreateReviewUseCase.Execute(r.Context(), input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
 }
 
 func (h *WebReviewHandler) FindReviewByID(w http.ResponseWriter, r *http.Request) {

@@ -36,7 +36,6 @@ func (uc *FindUserByEmailUsecase) Execute(ctx context.Context, email string) (*d
 		Avatar:    user.Avatar,
 		Points:    user.Points,
 		Missions:  user.Missions,
-		Favorites: user.Favorites,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 	}, nil

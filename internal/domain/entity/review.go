@@ -73,16 +73,15 @@ type Review struct {
 	UpdatedAt             time.Time
 }
 
-func NewReview(placeID, userID, text string, photos []Photo, rating float64, reactions []Reaction) *Review {
+func NewReview(placeID string, userID string, content string, photos []Photo, rating float64, accessibilityFeatures []string) *Review {
 	return &Review{
 		ID:                    uuid.New(),
 		PlaceID:               placeID,
 		UserID:                userID,
-		Content:               text,
+		Content:               content,
 		Photos:                photos,
 		Rating:                rating,
-		Reactions:             reactions,
-		AccessibilityFeatures: []string{},
+		AccessibilityFeatures: accessibilityFeatures,
 		CreatedAt:             time.Now(),
 		UpdatedAt:             time.Now(),
 	}

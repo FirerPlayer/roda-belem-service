@@ -33,7 +33,6 @@ type User struct {
 	Password  string
 	Points    int
 	Missions  []Mission
-	Favorites []Place
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

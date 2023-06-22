@@ -29,7 +29,7 @@ func (uc *FindReviewsByUserIDUseCase) Execute(ctx context.Context, input dto.Fin
 			ID:                    review.ID.String(),
 			PlaceID:               review.PlaceID,
 			UserID:                review.UserID,
-			Text:                  review.Content,
+			Content:               review.Content,
 			Photos:                review.Photos,
 			Rating:                review.Rating,
 			Reactions:             review.Reactions,

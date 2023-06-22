@@ -33,8 +33,23 @@ type UpdateUserInputDTO struct {
 	UpdatedAt time.Time        `json:"updatedAt"`
 }
 
+type FindUserByIDInputDTO struct {
+	UserId string `json:"userId"`
+}
+
+type FindUserByIDOutputDTO struct {
+	ID        string           `json:"id"`
+	Email     string           `json:"email"`
+	Username  string           `json:"username"`
+	Avatar    []byte           `json:"avatar"`
+	Points    int              `json:"points"`
+	Missions  []entity.Mission `json:"missions"`
+	CreatedAt time.Time        `json:"createdAt"`
+	UpdatedAt time.Time        `json:"updatedAt"`
+}
+
 type FindUserByEmailInputDTO struct {
-	Email string
+	Email string `json:"email"`
 }
 type FindUserByEmailOutputDTO struct {
 	ID        string           `json:"id"`
@@ -43,7 +58,6 @@ type FindUserByEmailOutputDTO struct {
 	Avatar    []byte           `json:"avatar"`
 	Points    int              `json:"points"`
 	Missions  []entity.Mission `json:"missions"`
-	Favorites []entity.Place   `json:"favorites"`
 	CreatedAt time.Time        `json:"createdAt"`
 	UpdatedAt time.Time        `json:"updatedAt"`
 }
@@ -54,7 +68,8 @@ type AuthenticateJwtUserInputDTO struct {
 }
 
 type AuthenticateJwtUserOutputDTO struct {
-	Token string `json:"token"`
+	Token     string    `json:"token"`
+	ExpiresAt time.Time `json:"expiresAt"`
 }
 
 type AddFavoritesInputDTO struct {
@@ -77,4 +92,9 @@ type FindFavoritesByUserIdInputDTO struct {
 
 type FindFavoritesByUserIdOutputDTO struct {
 	PlaceId string `json:"placeId"`
+}
+
+type UpdateUserPointsByUserIDInputDTO struct {
+	UserId string `json:"userId"`
+	Points int    `json:"points"`
 }
