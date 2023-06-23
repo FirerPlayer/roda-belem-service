@@ -7,13 +7,9 @@ import (
 )
 
 type CreateUserInputDTO struct {
-	Email     string    `json:"email"`
-	Avatar    []byte    `json:"avatar"`
-	Username  string    `json:"username"`
-	Password  string    `json:"password"`
-	Points    int       `json:"points"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
+	Email    string `json:"email"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 type ListAllUsersOutputDTO struct {
