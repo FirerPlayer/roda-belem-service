@@ -13,7 +13,7 @@ type CreateReviewUsecase struct {
 	ReviewsGateway gateway.ReviewsGateway
 }
 
-func NewCreateReviewUsecase(reviewsGateway gateway.ReviewsGateway) *CreateReviewUsecase {
+func NewCreateReviewUseCase(reviewsGateway gateway.ReviewsGateway) *CreateReviewUsecase {
 	return &CreateReviewUsecase{
 		ReviewsGateway: reviewsGateway,
 	}

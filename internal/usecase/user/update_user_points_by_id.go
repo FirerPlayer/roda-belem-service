@@ -12,7 +12,7 @@ type UpdateUserPointsByUserIdUseCase struct {
 	UsersGateway gateway.UsersGateway
 }
 
-func NewUpdateUserPointsByUserIDUsecase(usersGateway gateway.UsersGateway) *UpdateUserPointsByUserIdUseCase {
+func NewUpdateUserPointsByUserIDUseCase(usersGateway gateway.UsersGateway) *UpdateUserPointsByUserIdUseCase {
 	return &UpdateUserPointsByUserIdUseCase{
 		UsersGateway: usersGateway,
 	}

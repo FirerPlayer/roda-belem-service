@@ -29,7 +29,7 @@ type UsersGateway interface {
 }
 */
 
-type WebUserHandler struct {
+type WebUserHandlers struct {
 	CreateUserUseCase                       usecase.CreateUserUsecase
 	ListAllUsersUseCase                     usecase.ListAllUsersUsecase
 	FindUserByIdUseCase                     usecase.FindUserByIDUseCase
@@ -51,8 +51,8 @@ func NewWebUserHandler(
 	updateUserPointsByUserIdUseCase usecase.UpdateUserPointsByUserIdUseCase,
 	addFavoriteByUserIdAndPlaceIdUseCase usecase.AddFavoritesUseCase,
 	deleteFavoriteByUserIdAndPlaceIdUseCase usecase.DeleteFavoriteUseCase,
-) *WebUserHandler {
-	return &WebUserHandler{
+) *WebUserHandlers {
+	return &WebUserHandlers{
 		CreateUserUseCase:                       createUserUseCase,
 		ListAllUsersUseCase:                     listAllUsersUseCase,
 		FindUserByIdUseCase:                     findUserByIdUseCase,
@@ -65,7 +65,7 @@ func NewWebUserHandler(
 	}
 }
 
-func (h *WebUserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
+func (h *WebUserHandlers) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var input dto.CreateUserInputDTO
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
@@ -80,7 +80,7 @@ func (h *WebUserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
-func (h *WebUserHandler) ListAllUsers(w http.ResponseWriter, r *http.Request) {
+func (h *WebUserHandlers) ListAllUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := h.ListAllUsersUseCase.Execute(r.Context())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -90,7 +90,7 @@ func (h *WebUserHandler) ListAllUsers(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(users)
 }
 
-func (h *WebUserHandler) FindUserByID(w http.ResponseWriter, r *http.Request) {
+func (h *WebUserHandlers) FindUserByID(w http.ResponseWriter, r *http.Request) {
 	var input dto.FindUserByIDInputDTO
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
@@ -107,7 +107,7 @@ func (h *WebUserHandler) FindUserByID(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
-func (h *WebUserHandler) FindUserByEmail(w http.ResponseWriter, r *http.Request) {
+func (h *WebUserHandlers) FindUserByEmail(w http.ResponseWriter, r *http.Request) {
 	var input dto.FindUserByEmailInputDTO
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
@@ -124,7 +124,7 @@ func (h *WebUserHandler) FindUserByEmail(w http.ResponseWriter, r *http.Request)
 	json.NewEncoder(w).Encode(user)
 }
 
-func (h *WebUserHandler) UpdateUserByID(w http.ResponseWriter, r *http.Request) {
+func (h *WebUserHandlers) UpdateUserByID(w http.ResponseWriter, r *http.Request) {
 	var input dto.UpdateUserInputDTO
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
@@ -140,7 +140,7 @@ func (h *WebUserHandler) UpdateUserByID(w http.ResponseWriter, r *http.Request) 
 	w.WriteHeader(http.StatusOK)
 }
 
-func (h *WebUserHandler) DeleteUserByID(w http.ResponseWriter, r *http.Request) {
+func (h *WebUserHandlers) DeleteUserByID(w http.ResponseWriter, r *http.Request) {
 	var input dto.DeleteUserByIdInputDTO
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
@@ -156,7 +156,7 @@ func (h *WebUserHandler) DeleteUserByID(w http.ResponseWriter, r *http.Request) 
 	w.WriteHeader(http.StatusOK)
 }
 
-func (h *WebUserHandler) UpdateUserPointsByUserId(w http.ResponseWriter, r *http.Request) {
+func (h *WebUserHandlers) UpdateUserPointsByUserId(w http.ResponseWriter, r *http.Request) {
 	var input dto.UpdateUserPointsByUserIDInputDTO
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
@@ -172,7 +172,7 @@ func (h *WebUserHandler) UpdateUserPointsByUserId(w http.ResponseWriter, r *http
 	w.WriteHeader(http.StatusOK)
 }
 
-func (h *WebUserHandler) AddFavoriteByUserIdAndPlaceId(w http.ResponseWriter, r *http.Request) {
+func (h *WebUserHandlers) AddFavoriteByUserIdAndPlaceId(w http.ResponseWriter, r *http.Request) {
 	var input dto.AddFavoritesInputDTO
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
@@ -188,7 +188,7 @@ func (h *WebUserHandler) AddFavoriteByUserIdAndPlaceId(w http.ResponseWriter, r 
 	w.WriteHeader(http.StatusOK)
 }
 
-func (h *WebUserHandler) DeleteFavoriteByUserIdAndPlaceId(w http.ResponseWriter, r *http.Request) {
+func (h *WebUserHandlers) DeleteFavoriteByUserIdAndPlaceId(w http.ResponseWriter, r *http.Request) {
 	var input dto.DeleteFavoriteByUserIdAndPlaceIdInputDTO
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {

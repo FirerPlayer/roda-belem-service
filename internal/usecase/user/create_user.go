@@ -13,7 +13,7 @@ type CreateUserUsecase struct {
 	UsersGateway gateway.UsersGateway
 }
 
-func NewCreateUserUsecase(usersGateway gateway.UsersGateway) *CreateUserUsecase {
+func NewCreateUserUseCase(usersGateway gateway.UsersGateway) *CreateUserUsecase {
 	return &CreateUserUsecase{
 		UsersGateway: usersGateway,
 	}

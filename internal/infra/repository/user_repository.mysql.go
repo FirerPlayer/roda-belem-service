@@ -114,7 +114,7 @@ func (r *UserRepositoryMysql) UpdateUserPointsByUserId(ctx context.Context, user
 	return r.Queries.UpdateUserPointsByUserId(ctx, params)
 }
 
-func (r *UserRepositoryMysql) AddFavoritePlaceByUserId(ctx context.Context, userId string, placeId string) error {
+func (r *UserRepositoryMysql) AddFavoriteByUserIdAndPlaceId(ctx context.Context, userId string, placeId string) error {
 	params := db.CreateFavoriteParams{
 		UserID:  sql.NullString{String: userId},
 		PlaceID: sql.NullString{String: placeId},
@@ -123,7 +123,7 @@ func (r *UserRepositoryMysql) AddFavoritePlaceByUserId(ctx context.Context, user
 	return r.Queries.CreateFavorite(ctx, params)
 }
 
-func (r *UserRepositoryMysql) DeleteFavoritePlaceByUserIdAndPlaceId(ctx context.Context, userId string, placeId string) error {
+func (r *UserRepositoryMysql) DeleteFavoriteByUserIdAndPlaceId(ctx context.Context, userId string, placeId string) error {
 	params := db.DeleteFavoriteByUserIdAndPlaceIdParams{
 		UserID:  sql.NullString{String: userId},
 		PlaceID: sql.NullString{String: placeId},

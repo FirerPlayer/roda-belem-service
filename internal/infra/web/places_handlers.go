@@ -8,7 +8,7 @@ import (
 	usecase "github.com/firerplayer/roda-belem-service/internal/usecase/places"
 )
 
-type WebPlacesHandler struct {
+type WebPlacesHandlers struct {
 	CreatePLaceUseCase                      usecase.CreatePlaceUseCase
 	DeletePlaceByIDUseCase                  usecase.DeletePlaceByIDUseCase
 	FindNearbyPlacesUseCase                 usecase.FindNearbyPlacesUseCase
@@ -17,15 +17,15 @@ type WebPlacesHandler struct {
 	UpdatePLaceByIDUseCase                  usecase.UpdatePLaceByIDUseCase
 }
 
-func NewWebServiceHandler(
+func NewWebPlacesHandlers(
 	createPLaceUseCase usecase.CreatePlaceUseCase,
 	deletePlaceByIDUseCase usecase.DeletePlaceByIDUseCase,
 	findNearbyPlacesUseCase usecase.FindNearbyPlacesUseCase,
 	findPlaceByIDUseCase usecase.FindPlaceByIDUseCase,
 	findPlacesByAccessibilityFeatureUseCase usecase.FindPlacesByAccessibilityFeatureUseCase,
 	updatePLaceByIDUseCase usecase.UpdatePLaceByIDUseCase,
-) *WebPlacesHandler {
-	return &WebPlacesHandler{
+) *WebPlacesHandlers {
+	return &WebPlacesHandlers{
 		CreatePLaceUseCase:                      createPLaceUseCase,
 		DeletePlaceByIDUseCase:                  deletePlaceByIDUseCase,
 		FindNearbyPlacesUseCase:                 findNearbyPlacesUseCase,
@@ -34,7 +34,7 @@ func NewWebServiceHandler(
 		UpdatePLaceByIDUseCase:                  updatePLaceByIDUseCase,
 	}
 }
-func (h *WebPlacesHandler) CreatePlace(w http.ResponseWriter, r *http.Request) {
+func (h *WebPlacesHandlers) CreatePlace(w http.ResponseWriter, r *http.Request) {
 	var input dto.CreatePlaceInputDTO
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
@@ -50,7 +50,7 @@ func (h *WebPlacesHandler) CreatePlace(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
-func (h *WebPlacesHandler) DeletePlaceByID(w http.ResponseWriter, r *http.Request) {
+func (h *WebPlacesHandlers) DeletePlaceByID(w http.ResponseWriter, r *http.Request) {
 	var input dto.DeletePlaceByIDInputDTO
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
@@ -66,7 +66,7 @@ func (h *WebPlacesHandler) DeletePlaceByID(w http.ResponseWriter, r *http.Reques
 	w.WriteHeader(http.StatusOK)
 }
 
-func (h *WebPlacesHandler) FindNearbyPlaces(w http.ResponseWriter, r *http.Request) {
+func (h *WebPlacesHandlers) FindNearbyPlaces(w http.ResponseWriter, r *http.Request) {
 	var input dto.FindNearbyPlacesInputDTO
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
@@ -83,7 +83,7 @@ func (h *WebPlacesHandler) FindNearbyPlaces(w http.ResponseWriter, r *http.Reque
 	json.NewEncoder(w).Encode(output)
 }
 
-func (h *WebPlacesHandler) FindPlaceByID(w http.ResponseWriter, r *http.Request) {
+func (h *WebPlacesHandlers) FindPlaceByID(w http.ResponseWriter, r *http.Request) {
 	var input dto.FindPlaceByIDInputDTO
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
@@ -100,7 +100,7 @@ func (h *WebPlacesHandler) FindPlaceByID(w http.ResponseWriter, r *http.Request)
 	json.NewEncoder(w).Encode(output)
 }
 
-func (h *WebPlacesHandler) FindPlacesByAccessibilityFeature(w http.ResponseWriter, r *http.Request) {
+func (h *WebPlacesHandlers) FindPlacesByAccessibilityFeature(w http.ResponseWriter, r *http.Request) {
 	var input dto.FindPlacesByAccessibilityFeatureInputDTO
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
@@ -117,7 +117,7 @@ func (h *WebPlacesHandler) FindPlacesByAccessibilityFeature(w http.ResponseWrite
 	json.NewEncoder(w).Encode(output)
 }
 
-func (h *WebPlacesHandler) UpdatePLaceByID(w http.ResponseWriter, r *http.Request) {
+func (h *WebPlacesHandlers) UpdatePLaceByID(w http.ResponseWriter, r *http.Request) {
 	var input dto.UpdatePlaceByIDInputDTO
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {

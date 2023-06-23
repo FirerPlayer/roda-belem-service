@@ -14,15 +14,13 @@ import (
 
 type FindNearbyPlacesUseCase struct {
 	PlacesGateway    gateway.PlacesGateway
-	ReviewsGateway   gateway.ReviewsGateway
 	GoogleMapsClient *maps.Client
 	BloomFilter      *blooms.BloomFilter
 }
 
-func NewFindNearbyPlacesUseCase(placesGateway gateway.PlacesGateway, reviewsGateway gateway.ReviewsGateway, googleMapsClient *maps.Client, bloomFilter *blooms.BloomFilter) *FindNearbyPlacesUseCase {
+func NewFindNearbyPlacesUseCase(placesGateway gateway.PlacesGateway, googleMapsClient *maps.Client, bloomFilter *blooms.BloomFilter) *FindNearbyPlacesUseCase {
 	return &FindNearbyPlacesUseCase{
 		PlacesGateway:    placesGateway,
-		ReviewsGateway:   reviewsGateway,
 		GoogleMapsClient: googleMapsClient,
 		BloomFilter:      bloomFilter,
 	}

@@ -1,23 +1,24 @@
-version: "3"
+version: '3'
 
 services:
-  goapp:
+  app:
     build: .
+    container_name: rodabelem_service
+    restart: always
     volumes:
-      - .:/go/app
-    platform: linux/amd64
+      - .:/go/src
     ports:
-      - "8000:8000"
-    extra_hosts:
-      - "host.docker.internal:172.17.0.1"
+      - "8080:8080"
+
   mysql:
-    image: mysql:5.7
+    image: mysql:8
     container_name: mysql
-    ports:
-      - "3306:3306"
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: roda-belem
+      MYSQL_DATABASE: roda_belem_test
       MYSQL_PASSWORD: root
-    extra_hosts:
-      - "host.docker.internal:172.17.0.1"
+    ports:
+      - 3306:3306  
+    volumes:
+      - .docker/mysql:/var/lib/mysql

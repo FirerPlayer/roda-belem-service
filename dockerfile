@@ -1,7 +1,15 @@
-FROM golang:latest
+FROM golang:1.20.3
 
-WORKDIR /go/app
+# Set environment variables
+ENV PATH="/root/.cargo/bin:${PATH}"
+ENV USER=root
 
-RUN apt-get update && apt-get install -y librdkafka-dev
+WORKDIR /go/src
+RUN ln -sf /bin/bash /bin/sh
+COPY go.mod go.sum ./
+RUN go mod download && go mod verify
+COPY . .
 
-CMD ["tail", "-f", "/dev/null"]
+RUN apt update
+
+CMD [ "tail", "-f", "/dev/null" ]

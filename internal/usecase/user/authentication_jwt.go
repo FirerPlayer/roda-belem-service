@@ -3,7 +3,6 @@ package usecase
 import (
 	"context"
 	"errors"
-	"os"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -14,11 +13,13 @@ import (
 
 type AuthenticationJwtUseCase struct {
 	UsersGateway gateway.UsersGateway
+	JwtSecretKey string
 }
 
-func NewAuthenticationJwtUseCase(usersGateway gateway.UsersGateway) *AuthenticationJwtUseCase {
+func NewAuthenticationJwtUseCase(usersGateway gateway.UsersGateway, jwtSecretKey string) *AuthenticationJwtUseCase {
 	return &AuthenticationJwtUseCase{
 		UsersGateway: usersGateway,
+		JwtSecretKey: jwtSecretKey,
 	}
 }
 
@@ -46,7 +47,7 @@ func (uc *AuthenticationJwtUseCase) Execute(ctx context.Context, input dto.Authe
 		"user_id": user.ID.String(),
 		"exp":     exp_date.Unix(),
 	})
-	tokenString, err := token.SignedString([]byte(os.Getenv("jtw_secret_key")))
+	tokenString, err := token.SignedString([]byte(uc.JwtSecretKey))
 	if err != nil {
 		return nil, errors.New("failed to generate token " + err.Error())
 	}

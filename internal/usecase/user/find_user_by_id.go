@@ -11,7 +11,7 @@ type FindUserByIDUseCase struct {
 	UsersGateway gateway.UsersGateway
 }
 
-func NewFindUserByIdUsecase(usersGateway gateway.UsersGateway) *FindUserByIDUseCase {
+func NewFindUserByIdUseCase(usersGateway gateway.UsersGateway) *FindUserByIDUseCase {
 	return &FindUserByIDUseCase{
 		UsersGateway: usersGateway,
 	}
