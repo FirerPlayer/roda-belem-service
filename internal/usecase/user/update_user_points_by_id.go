@@ -21,7 +21,7 @@ func NewUpdateUserPointsByUserIDUseCase(usersGateway gateway.UsersGateway) *Upda
 func (uc *UpdateUserPointsByUserIdUseCase) Execute(ctx context.Context, input dto.UpdateUserPointsByUserIDInputDTO) error {
 	err := uc.UsersGateway.UpdateUserPointsByUserId(ctx, input.UserId, input.Points)
 	if err != nil {
-		return errors.New("failed to update user points " + err.Error())
+		return errors.New("failed to update user points -> " + err.Error())
 	}
 	return nil
 }

@@ -39,6 +39,7 @@ type WebUserHandlers struct {
 	UpdateUserPointsByUserIdUseCase         usecase.UpdateUserPointsByUserIdUseCase
 	AddFavoriteByUserIdAndPlaceIdUseCase    usecase.AddFavoritesUseCase
 	DeleteFavoriteByUserIdAndPlaceIdUseCase usecase.DeleteFavoriteUseCase
+	AuthenticateJwtUseCase                  usecase.AuthenticationJwtUseCase
 }
 
 func NewWebUserHandler(
@@ -51,6 +52,7 @@ func NewWebUserHandler(
 	updateUserPointsByUserIdUseCase usecase.UpdateUserPointsByUserIdUseCase,
 	addFavoriteByUserIdAndPlaceIdUseCase usecase.AddFavoritesUseCase,
 	deleteFavoriteByUserIdAndPlaceIdUseCase usecase.DeleteFavoriteUseCase,
+	authenticateJwtUseCase usecase.AuthenticationJwtUseCase,
 ) *WebUserHandlers {
 	return &WebUserHandlers{
 		CreateUserUseCase:                       createUserUseCase,
@@ -62,6 +64,7 @@ func NewWebUserHandler(
 		UpdateUserPointsByUserIdUseCase:         updateUserPointsByUserIdUseCase,
 		AddFavoriteByUserIdAndPlaceIdUseCase:    addFavoriteByUserIdAndPlaceIdUseCase,
 		DeleteFavoriteByUserIdAndPlaceIdUseCase: deleteFavoriteByUserIdAndPlaceIdUseCase,
+		AuthenticateJwtUseCase:                  authenticateJwtUseCase,
 	}
 }
 
@@ -202,4 +205,22 @@ func (h *WebUserHandlers) DeleteFavoriteByUserIdAndPlaceId(w http.ResponseWriter
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
+}
+
+func (h *WebUserHandlers) LoginUser(w http.ResponseWriter, r *http.Request) {
+	var input dto.AuthenticateJwtUserInputDTO
+	err := json.NewDecoder(r.Body).Decode(&input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	output, err := h.AuthenticateJwtUseCase.Execute(r.Context(), input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Authorization", "Bearer "+output.Token)
+	w.WriteHeader(http.StatusAccepted)
+
 }

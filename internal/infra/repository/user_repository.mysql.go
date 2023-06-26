@@ -29,8 +29,8 @@ func (r *UserRepositoryMysql) CreateUser(ctx context.Context, user *entity.User)
 		Email:     user.Email,
 		Password:  user.Password,
 		Points:    int32(user.Points),
-		CreatedAt: sql.NullTime{Time: user.CreatedAt},
-		UpdatedAt: sql.NullTime{Time: user.UpdatedAt},
+		CreatedAt: sql.NullTime{Time: user.CreatedAt, Valid: true},
+		UpdatedAt: sql.NullTime{Time: user.UpdatedAt, Valid: true},
 	}
 	missions, err := json.Marshal(user.Missions)
 	if err != nil {
@@ -87,11 +87,11 @@ func (r *UserRepositoryMysql) UpdateUserById(ctx context.Context, id string, use
 	params := db.UpdateUserByIdParams{
 		ID:        id,
 		Email:     user.Email,
-		Avatar:    sql.NullString{String: string(user.Avatar)},
+		Avatar:    sql.NullString{String: string(user.Avatar), Valid: true},
 		Username:  user.Username,
 		Password:  user.Password,
 		Points:    int32(user.Points),
-		UpdatedAt: sql.NullTime{Time: user.UpdatedAt},
+		UpdatedAt: sql.NullTime{Time: user.UpdatedAt, Valid: true},
 	}
 	missions, err := json.Marshal(user.Missions)
 	if err != nil {
@@ -116,8 +116,8 @@ func (r *UserRepositoryMysql) UpdateUserPointsByUserId(ctx context.Context, user
 
 func (r *UserRepositoryMysql) AddFavoriteByUserIdAndPlaceId(ctx context.Context, userId string, placeId string) error {
 	params := db.CreateFavoriteParams{
-		UserID:  sql.NullString{String: userId},
-		PlaceID: sql.NullString{String: placeId},
+		UserID:  sql.NullString{String: userId, Valid: true},
+		PlaceID: sql.NullString{String: placeId, Valid: true},
 	}
 
 	return r.Queries.CreateFavorite(ctx, params)
@@ -125,14 +125,14 @@ func (r *UserRepositoryMysql) AddFavoriteByUserIdAndPlaceId(ctx context.Context,
 
 func (r *UserRepositoryMysql) DeleteFavoriteByUserIdAndPlaceId(ctx context.Context, userId string, placeId string) error {
 	params := db.DeleteFavoriteByUserIdAndPlaceIdParams{
-		UserID:  sql.NullString{String: userId},
-		PlaceID: sql.NullString{String: placeId},
+		UserID:  sql.NullString{String: userId, Valid: true},
+		PlaceID: sql.NullString{String: placeId, Valid: true},
 	}
 	return r.Queries.DeleteFavoriteByUserIdAndPlaceId(ctx, params)
 }
 
 func (r *UserRepositoryMysql) FindFavoritesByUserId(ctx context.Context, userId string) ([]string, error) {
-	favoritesDb, err := r.Queries.FindFavoritesByUserId(ctx, sql.NullString{String: userId})
+	favoritesDb, err := r.Queries.FindFavoritesByUserId(ctx, sql.NullString{String: userId, Valid: true})
 	if err != nil {
 		return nil, err
 	}
@@ -149,7 +149,11 @@ func (r *UserRepositoryMysql) FindFavoritesByUserId(ctx context.Context, userId 
 // user: The user entity to hydrate.
 // error: Returns an error if the JSON unmarshal fails.
 func HydrateUser(userDb db.User, user *entity.User) error {
-	user.ID = uuid.MustParse(userDb.ID)
+	id, err := uuid.Parse(userDb.ID)
+	if err != nil {
+		return err
+	}
+	user.ID = id
 	user.Email = userDb.Email
 	user.Avatar = []byte(userDb.Avatar.String)
 	user.Username = userDb.Username
@@ -157,7 +161,7 @@ func HydrateUser(userDb db.User, user *entity.User) error {
 	user.Points = int(userDb.Points)
 	user.CreatedAt = userDb.CreatedAt.Time
 	user.UpdatedAt = userDb.UpdatedAt.Time
-	err := json.Unmarshal(userDb.Missions, &user.Missions)
+	err = json.Unmarshal(userDb.Missions, &user.Missions)
 	if err != nil {
 		return err
 	}

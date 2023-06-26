@@ -36,7 +36,7 @@ func (uc *UpdateUserByIDUseCase) Execute(ctx context.Context, input dto.UpdateUs
 		UpdatedAt: time.Now(),
 	})
 	if err != nil {
-		return errors.New("Failed to update user " + err.Error())
+		return errors.New("Failed to update user -> " + err.Error())
 	}
 	return nil
 }

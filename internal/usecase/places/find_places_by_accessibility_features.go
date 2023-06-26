@@ -22,7 +22,7 @@ func (uc FindPlacesByAccessibilityFeatureUseCase) Execute(ctx context.Context, i
 
 	places, err := uc.PlacesGateway.FindPlacesByAccessibilityFeature(ctx, input.AccessibilityFeature)
 	if err != nil {
-		return nil, errors.New("failed to find places by accessibility features: " + err.Error())
+		return nil, errors.New("failed to find places by accessibility features -> " + err.Error())
 	}
 	var output []*dto.FindPlacesByAccessibilityFeatureOutputDTO
 	for _, place := range places {

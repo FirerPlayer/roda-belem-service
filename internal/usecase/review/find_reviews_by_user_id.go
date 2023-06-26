@@ -21,7 +21,7 @@ func NewFindReviewsByUserIDUseCase(reviewsGateway gateway.ReviewsGateway) *FindR
 func (uc *FindReviewsByUserIDUseCase) Execute(ctx context.Context, input dto.FindReviewsByUserIDInputDTO) ([]*dto.FindReviewsByUserIDOutputDTO, error) {
 	reviews, err := uc.ReviewsGateway.FindReviewsByPlaceID(ctx, input.UserID, input.Limit, input.Offset)
 	if err != nil {
-		return nil, errors.New("review not found: " + err.Error())
+		return nil, errors.New("review not found -> " + err.Error())
 	}
 	var output []*dto.FindReviewsByUserIDOutputDTO
 	for _, review := range reviews {

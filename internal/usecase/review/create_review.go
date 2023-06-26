@@ -31,7 +31,7 @@ func (uc *CreateReviewUsecase) Execute(ctx context.Context, input dto.CreateRevi
 
 	err := uc.ReviewsGateway.Create(ctx, newReview)
 	if err != nil {
-		return errors.New("failed to create review: " + err.Error())
+		return errors.New("failed to create review -> " + err.Error())
 	}
 	return nil
 }

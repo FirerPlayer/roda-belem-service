@@ -21,7 +21,7 @@ func NewDeleteFavoriteUseCase(usersGateway gateway.UsersGateway) *DeleteFavorite
 func (uc *DeleteFavoriteUseCase) Execute(ctx context.Context, input dto.DeleteFavoriteByUserIdAndPlaceIdInputDTO) error {
 	err := uc.UsersGateway.DeleteFavoriteByUserIdAndPlaceId(ctx, input.UserId, input.PlaceId)
 	if err != nil {
-		return errors.New("failed to delete favorite: " + err.Error())
+		return errors.New("failed to delete favorite -> " + err.Error())
 	}
 	return nil
 }

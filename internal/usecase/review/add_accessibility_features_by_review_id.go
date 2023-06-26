@@ -23,7 +23,7 @@ func (u *AddAccessibilityFeaturesByReviewIDUseCase) Execute(ctx context.Context,
 	formatedFeatures := strings.Join(input.Features, ",")
 	err := u.ReviewGateway.AddAccessibilityFeatureByReviewID(ctx, input.ReviewID, formatedFeatures)
 	if err != nil {
-		return errors.New("error adding accessibility features: " + err.Error())
+		return errors.New("error adding accessibility features -> " + err.Error())
 	}
 	return nil
 }

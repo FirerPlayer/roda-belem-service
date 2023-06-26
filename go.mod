@@ -3,19 +3,18 @@ module github.com/firerplayer/roda-belem-service
 go 1.20
 
 require (
-	github.com/bits-and-blooms/bloom/v3 v3.4.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
-	github.com/go-chi/chi v1.5.4
 	github.com/go-chi/chi/v5 v5.0.8
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/google/uuid v1.3.0
+	github.com/panmari/cuckoofilter v1.0.3
 	github.com/spf13/viper v1.16.0
 	golang.org/x/crypto v0.9.0
 	googlemaps.github.io/maps v1.4.0
 )
 
 require (
-	github.com/bits-and-blooms/bitset v1.3.1 // indirect
+	github.com/dgryski/go-metro v0.0.0-20200812162917-85c65e2d0165 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect

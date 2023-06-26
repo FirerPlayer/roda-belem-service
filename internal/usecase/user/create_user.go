@@ -27,11 +27,11 @@ func NewCreateUserUseCase(usersGateway gateway.UsersGateway) *CreateUserUsecase 
 func (uc *CreateUserUsecase) Execute(ctx context.Context, input dto.CreateUserInputDTO) error {
 	newUser, err := entity.NewUser(input.Email, input.Username, input.Password)
 	if err != nil {
-		return errors.New("failed to create user " + err.Error())
+		return errors.New("failed to create user -> " + err.Error())
 	}
 	err = uc.UsersGateway.CreateUser(ctx, newUser)
 	if err != nil {
-		return errors.New("failed to create user " + err.Error())
+		return errors.New("failed to create user -> " + err.Error())
 	}
 	return nil
 }

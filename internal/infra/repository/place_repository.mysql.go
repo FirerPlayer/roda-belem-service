@@ -48,16 +48,18 @@ func (p *PlaceRepositoryMySQL) Create(ctx context.Context, place *entity.Place) 
 	}
 	args := db.CreatePlaceParams{
 		ID:               place.ID.String(),
-		GooglePlaceID:    sql.NullString{String: place.GooglePlaceId},
-		Name:             sql.NullString{String: place.Name},
-		FormattedAddress: sql.NullString{String: place.FormattedAddress},
-		Lat:              sql.NullFloat64{Float64: place.Lat},
-		Lng:              sql.NullFloat64{Float64: place.Lng},
-		Icon:             sql.NullString{String: place.Icon},
+		GooglePlaceID:    sql.NullString{String: place.GooglePlaceId, Valid: true},
+		Name:             sql.NullString{String: place.Name, Valid: true},
+		FormattedAddress: sql.NullString{String: place.FormattedAddress, Valid: true},
+		Lat:              sql.NullFloat64{Float64: place.Lat, Valid: true},
+		Lng:              sql.NullFloat64{Float64: place.Lng, Valid: true},
+		Icon:             sql.NullString{String: place.Icon, Valid: true},
 		Types:            types,
 		OpeningPeriods:   openingPeriods,
 		Photos:           photos,
-		Rating:           sql.NullFloat64{Float64: place.Rating},
+		Rating:           sql.NullFloat64{Float64: place.Rating, Valid: true},
+		CreatedAt:        sql.NullTime{Time: place.CreatedAt, Valid: true},
+		UpdatedAt:        sql.NullTime{Time: place.UpdatedAt, Valid: true},
 	}
 
 	if err := p.Queries.CreatePlace(ctx, args); err != nil {
@@ -104,7 +106,7 @@ func (p *PlaceRepositoryMySQL) FindNearbyPlaces(ctx context.Context, latitude fl
 	params := db.FindPlacesNearbyParams{
 		POINT:   latitude,
 		POINT_2: longitude,
-		Lat:     sql.NullFloat64{Float64: latitude},
+		Lat:     sql.NullFloat64{Float64: latitude, Valid: true},
 	}
 
 	places, err := p.Queries.FindPlacesNearby(ctx, params)
@@ -126,13 +128,14 @@ func (p *PlaceRepositoryMySQL) FindNearbyPlaces(ctx context.Context, latitude fl
 func (p *PlaceRepositoryMySQL) UpdatePlaceById(ctx context.Context, id string, place *entity.Place) error {
 	args := db.UpdatePlaceByIdParams{
 		ID:               place.ID.String(),
-		GooglePlaceID:    sql.NullString{String: place.GooglePlaceId},
-		Name:             sql.NullString{String: place.Name},
-		FormattedAddress: sql.NullString{String: place.FormattedAddress},
-		Lat:              sql.NullFloat64{Float64: place.Lat},
-		Lng:              sql.NullFloat64{Float64: place.Lng},
-		Icon:             sql.NullString{String: place.Icon},
-		Rating:           sql.NullFloat64{Float64: place.Rating},
+		GooglePlaceID:    sql.NullString{String: place.GooglePlaceId, Valid: true},
+		Name:             sql.NullString{String: place.Name, Valid: true},
+		FormattedAddress: sql.NullString{String: place.FormattedAddress, Valid: true},
+		Lat:              sql.NullFloat64{Float64: place.Lat, Valid: true},
+		Lng:              sql.NullFloat64{Float64: place.Lng, Valid: true},
+		Icon:             sql.NullString{String: place.Icon, Valid: true},
+		Rating:           sql.NullFloat64{Float64: place.Rating, Valid: true},
+		UpdatedAt:        sql.NullTime{Time: place.UpdatedAt, Valid: true},
 	}
 	types, err := json.Marshal(place.Types)
 	if err != nil {
@@ -169,14 +172,18 @@ func (p *PlaceRepositoryMySQL) DeletePlaceById(ctx context.Context, id string) e
 // place: The Place entity to hydrate.
 // error: Returns an error if there was a problem with hydrating the Place entity.
 func HydratePlace(placeDb db.Place, place *entity.Place) error {
-	place.ID = uuid.MustParse(placeDb.ID)
+	id, err := uuid.Parse(placeDb.ID)
+	if err != nil {
+		return err
+	}
+	place.ID = id
 	place.GooglePlaceId = placeDb.GooglePlaceID.String
 	place.Name = placeDb.Name.String
 	place.FormattedAddress = placeDb.FormattedAddress.String
 	place.Lat = placeDb.Lat.Float64
 	place.Lng = placeDb.Lng.Float64
 	place.Icon = placeDb.Icon.String
-	err := json.Unmarshal(placeDb.Types, &place.Types)
+	err = json.Unmarshal(placeDb.Types, &place.Types)
 	if err != nil {
 		return err
 	}

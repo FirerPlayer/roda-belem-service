@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 
 	"github.com/firerplayer/roda-belem-service/internal/domain/gateway"
 	"github.com/firerplayer/roda-belem-service/internal/usecase/dto"
@@ -20,7 +21,7 @@ func NewFindFavoritesByUserIDUseCase(usersGateway gateway.UsersGateway) *FindFav
 func (uc *FindFavoritesByUserIDUseCase) Execute(ctx context.Context, input dto.FindFavoritesByUserIdInputDTO) ([]*dto.FindFavoritesByUserIdOutputDTO, error) {
 	favorites, err := uc.UsersGateway.FindFavoritesByUserId(ctx, input.UserId)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("Failed to find favorites -> " + err.Error())
 	}
 	var out []*dto.FindFavoritesByUserIdOutputDTO
 

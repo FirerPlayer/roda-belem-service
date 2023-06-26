@@ -15,6 +15,7 @@ type WebPlacesHandlers struct {
 	FindPlaceByIDUseCase                    usecase.FindPlaceByIDUseCase
 	FindPlacesByAccessibilityFeatureUseCase usecase.FindPlacesByAccessibilityFeatureUseCase
 	UpdatePLaceByIDUseCase                  usecase.UpdatePLaceByIDUseCase
+	SaveFilterUseCase                       usecase.SaveFilterUseCase
 }
 
 func NewWebPlacesHandlers(
@@ -24,6 +25,7 @@ func NewWebPlacesHandlers(
 	findPlaceByIDUseCase usecase.FindPlaceByIDUseCase,
 	findPlacesByAccessibilityFeatureUseCase usecase.FindPlacesByAccessibilityFeatureUseCase,
 	updatePLaceByIDUseCase usecase.UpdatePLaceByIDUseCase,
+	saveFilterUseCase usecase.SaveFilterUseCase,
 ) *WebPlacesHandlers {
 	return &WebPlacesHandlers{
 		CreatePLaceUseCase:                      createPLaceUseCase,
@@ -32,6 +34,7 @@ func NewWebPlacesHandlers(
 		FindPlaceByIDUseCase:                    findPlaceByIDUseCase,
 		FindPlacesByAccessibilityFeatureUseCase: findPlacesByAccessibilityFeatureUseCase,
 		UpdatePLaceByIDUseCase:                  updatePLaceByIDUseCase,
+		SaveFilterUseCase:                       saveFilterUseCase,
 	}
 }
 func (h *WebPlacesHandlers) CreatePlace(w http.ResponseWriter, r *http.Request) {
@@ -84,7 +87,9 @@ func (h *WebPlacesHandlers) FindNearbyPlaces(w http.ResponseWriter, r *http.Requ
 }
 
 func (h *WebPlacesHandlers) FindPlaceByID(w http.ResponseWriter, r *http.Request) {
-	var input dto.FindPlaceByIDInputDTO
+	id := r.URL.Query().Get("id")
+	input := dto.FindPlaceByIDInputDTO{ID: id}
+
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -125,6 +130,16 @@ func (h *WebPlacesHandlers) UpdatePLaceByID(w http.ResponseWriter, r *http.Reque
 		return
 	}
 	err = h.UpdatePLaceByIDUseCase.Execute(r.Context(), input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+}
+
+func (h *WebPlacesHandlers) SaveFilter(w http.ResponseWriter, r *http.Request) {
+	err := h.SaveFilterUseCase.Execute(r.Context())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -64,8 +64,7 @@ type AuthenticateJwtUserInputDTO struct {
 }
 
 type AuthenticateJwtUserOutputDTO struct {
-	Token     string    `json:"token"`
-	ExpiresAt time.Time `json:"expiresAt"`
+	Token string `json:"token"`
 }
 
 type AddFavoritesInputDTO struct {

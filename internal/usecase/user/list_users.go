@@ -21,7 +21,7 @@ func NewListAllUsersUsecase(usersGateway gateway.UsersGateway) *ListAllUsersUsec
 func (uc *ListAllUsersUsecase) Execute(ctx context.Context) ([]*dto.ListAllUsersOutputDTO, error) {
 	users, err := uc.UsersGateway.ListAllUsers(ctx)
 	if err != nil {
-		return nil, errors.New("Failed to list users " + err.Error())
+		return nil, errors.New("Failed to list users -> " + err.Error())
 	}
 	var output []*dto.ListAllUsersOutputDTO
 	for _, user := range users {

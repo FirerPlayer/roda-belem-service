@@ -35,12 +35,12 @@ func NewReviewRepositoryMySQL(dbt *sql.DB) *ReviewRepositoryMySQL {
 func (r *ReviewRepositoryMySQL) Create(ctx context.Context, review *entity.Review) error {
 	params := db.CreateReviewParams{
 		ID:        review.ID.String(),
-		PlaceID:   sql.NullString{String: review.PlaceID},
-		UserID:    sql.NullString{String: review.UserID},
-		Content:   sql.NullString{String: review.Content},
-		Rating:    sql.NullFloat64{Float64: review.Rating},
-		CreatedAt: sql.NullTime{Time: review.CreatedAt},
-		UpdatedAt: sql.NullTime{Time: review.UpdatedAt},
+		PlaceID:   sql.NullString{String: review.PlaceID, Valid: true},
+		UserID:    sql.NullString{String: review.UserID, Valid: true},
+		Content:   sql.NullString{String: review.Content, Valid: true},
+		Rating:    sql.NullFloat64{Float64: review.Rating, Valid: true},
+		CreatedAt: sql.NullTime{Time: review.CreatedAt, Valid: true},
+		UpdatedAt: sql.NullTime{Time: review.UpdatedAt, Valid: true},
 	}
 	photos, err := json.Marshal(review.Photos)
 	if err != nil {
@@ -75,7 +75,7 @@ func (r *ReviewRepositoryMySQL) FindReviewByID(ctx context.Context, id string) (
 
 func (r *ReviewRepositoryMySQL) FindReviewsByPlaceID(ctx context.Context, placeId string, limit int, offset int) ([]*entity.Review, error) {
 	reviewsDb, err := r.Queries.FindReviewsByPlaceId(ctx, db.FindReviewsByPlaceIdParams{
-		PlaceID: sql.NullString{String: placeId},
+		PlaceID: sql.NullString{String: placeId, Valid: true},
 		Limit:   int32(limit),
 		Offset:  int32(offset),
 	})
@@ -97,7 +97,7 @@ func (r *ReviewRepositoryMySQL) FindReviewsByPlaceID(ctx context.Context, placeI
 
 func (r *ReviewRepositoryMySQL) FindReviewsByUserID(ctx context.Context, userId string, limit int, offset int) ([]*entity.Review, error) {
 	reviewsDb, err := r.Queries.FindReviewsByUserID(ctx, db.FindReviewsByUserIDParams{
-		UserID: sql.NullString{String: userId},
+		UserID: sql.NullString{String: userId, Valid: true},
 		Limit:  int32(limit),
 		Offset: int32(offset),
 	})
@@ -118,9 +118,9 @@ func (r *ReviewRepositoryMySQL) FindReviewsByUserID(ctx context.Context, userId 
 
 func (r *ReviewRepositoryMySQL) UpdateReviewByID(ctx context.Context, id string, review *entity.Review) error {
 	params := db.UpdateReviewByIdParams{
-		Content:   sql.NullString{String: review.Content},
-		Rating:    sql.NullFloat64{Float64: review.Rating},
-		UpdatedAt: sql.NullTime{Time: review.UpdatedAt},
+		Content:   sql.NullString{String: review.Content, Valid: true},
+		Rating:    sql.NullFloat64{Float64: review.Rating, Valid: true},
+		UpdatedAt: sql.NullTime{Time: review.UpdatedAt, Valid: true},
 	}
 	photos, err := json.Marshal(review.Photos)
 	if err != nil {
@@ -133,7 +133,7 @@ func (r *ReviewRepositoryMySQL) UpdateReviewByID(ctx context.Context, id string,
 	}
 	params.Reactions = reactions
 	afs := strings.Join(review.AccessibilityFeatures, ",")
-	params.AccessibilityFeatures = sql.NullString{String: afs}
+	params.AccessibilityFeatures = sql.NullString{String: afs, Valid: true}
 	return r.Queries.UpdateReviewById(ctx, params)
 }
 
@@ -162,7 +162,11 @@ func HydrateReview(reviewDb db.Review, review *entity.Review) error {
 	if err != nil {
 		return err
 	}
-	review.ID = uuid.MustParse(reviewDb.ID)
+	id, err := uuid.Parse(reviewDb.ID)
+	if err != nil {
+		return err
+	}
+	review.ID = id
 	review.CreatedAt = reviewDb.CreatedAt.Time
 	review.UpdatedAt = reviewDb.UpdatedAt.Time
 	review.UserID = reviewDb.UserID.String

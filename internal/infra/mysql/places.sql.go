@@ -12,20 +12,24 @@ import (
 )
 
 const createPlace = `-- name: CreatePlace :exec
-INSERT INTO places (
-    id,
-    google_place_id,
-    name,
-    formatted_address,
-    lat,
-    lng,
-    icon,
-    types,
-    opening_periods,
-    photos,
-    rating
-  )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+
+INSERT INTO
+    places (
+        id,
+        google_place_id,
+        name,
+        formatted_address,
+        lat,
+        lng,
+        icon,
+        types,
+        opening_periods,
+        photos,
+        rating,
+        created_at,
+        updated_at
+    )
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 `
 
 type CreatePlaceParams struct {
@@ -40,6 +44,8 @@ type CreatePlaceParams struct {
 	OpeningPeriods   json.RawMessage
 	Photos           json.RawMessage
 	Rating           sql.NullFloat64
+	CreatedAt        sql.NullTime
+	UpdatedAt        sql.NullTime
 }
 
 func (q *Queries) CreatePlace(ctx context.Context, arg CreatePlaceParams) error {
@@ -55,13 +61,15 @@ func (q *Queries) CreatePlace(ctx context.Context, arg CreatePlaceParams) error 
 		arg.OpeningPeriods,
 		arg.Photos,
 		arg.Rating,
+		arg.CreatedAt,
+		arg.UpdatedAt,
 	)
 	return err
 }
 
 const deletePlaceById = `-- name: DeletePlaceById :exec
-DELETE FROM places
-WHERE id = ?
+
+DELETE FROM places WHERE id = ?
 `
 
 func (q *Queries) DeletePlaceById(ctx context.Context, id string) error {
@@ -70,9 +78,8 @@ func (q *Queries) DeletePlaceById(ctx context.Context, id string) error {
 }
 
 const findPlaceByGooglePlaceId = `-- name: FindPlaceByGooglePlaceId :one
-SELECT id, google_place_id, name, formatted_address, lat, lng, icon, types, opening_periods, photos, rating, created_at, updated_at
-FROM places
-WHERE google_place_id = ?
+
+SELECT id, google_place_id, name, formatted_address, lat, lng, icon, types, opening_periods, photos, rating, created_at, updated_at FROM places WHERE google_place_id = ?
 `
 
 func (q *Queries) FindPlaceByGooglePlaceId(ctx context.Context, googlePlaceID sql.NullString) (Place, error) {
@@ -97,9 +104,8 @@ func (q *Queries) FindPlaceByGooglePlaceId(ctx context.Context, googlePlaceID sq
 }
 
 const findPlaceById = `-- name: FindPlaceById :one
-SELECT id, google_place_id, name, formatted_address, lat, lng, icon, types, opening_periods, photos, rating, created_at, updated_at
-FROM places
-WHERE id = ?
+
+SELECT id, google_place_id, name, formatted_address, lat, lng, icon, types, opening_periods, photos, rating, created_at, updated_at FROM places WHERE id = ?
 `
 
 func (q *Queries) FindPlaceById(ctx context.Context, id string) (Place, error) {
@@ -124,10 +130,12 @@ func (q *Queries) FindPlaceById(ctx context.Context, id string) (Place, error) {
 }
 
 const findPlacesByAccessibilityFeature = `-- name: FindPlacesByAccessibilityFeature :many
+
 SELECT p.id, p.google_place_id, p.name, p.formatted_address, p.lat, p.lng, p.icon, p.types, p.opening_periods, p.photos, p.rating, p.created_at, p.updated_at
 FROM places p
-JOIN reviews r ON p.id = r.place_id
-WHERE FIND_IN_SET(?, r.accessibilityFeatures) > 0
+    JOIN reviews r ON p.id = r.place_id
+WHERE
+    FIND_IN_SET(?, r.accessibilityFeatures) > 0
 `
 
 func (q *Queries) FindPlacesByAccessibilityFeature(ctx context.Context, findINSET string) ([]Place, error) {
@@ -168,9 +176,12 @@ func (q *Queries) FindPlacesByAccessibilityFeature(ctx context.Context, findINSE
 }
 
 const findPlacesNearby = `-- name: FindPlacesNearby :many
+
 SELECT id, google_place_id, name, formatted_address, lat, lng, icon, types, opening_periods, photos, rating, created_at, updated_at
-FROM places -- distance in meters
-WHERE ST_DISTANCE_SPHERE(POINT(lat, lng), POINT(?, ?)) <= ?
+FROM
+    places -- distance in meters
+WHERE
+    ST_DISTANCE_SPHERE(POINT(lat, lng), POINT(?, ?)) <= ?
 `
 
 type FindPlacesNearbyParams struct {
@@ -217,17 +228,20 @@ func (q *Queries) FindPlacesNearby(ctx context.Context, arg FindPlacesNearbyPara
 }
 
 const updatePlaceById = `-- name: UpdatePlaceById :exec
+
 UPDATE places
-SET google_place_id = ?,
-  name = ?,
-  formatted_address = ?,
-  lat = ?,
-  lng = ?,
-  icon = ?,
-  types = ?,
-  opening_periods = ?,
-  photos = ?,
-  rating = ?
+SET
+    google_place_id = ?,
+    name = ?,
+    formatted_address = ?,
+    lat = ?,
+    lng = ?,
+    icon = ?,
+    types = ?,
+    opening_periods = ?,
+    photos = ?,
+    rating = ?,
+    updated_at = ?
 WHERE id = ?
 `
 
@@ -242,6 +256,7 @@ type UpdatePlaceByIdParams struct {
 	OpeningPeriods   json.RawMessage
 	Photos           json.RawMessage
 	Rating           sql.NullFloat64
+	UpdatedAt        sql.NullTime
 	ID               string
 }
 
@@ -257,6 +272,7 @@ func (q *Queries) UpdatePlaceById(ctx context.Context, arg UpdatePlaceByIdParams
 		arg.OpeningPeriods,
 		arg.Photos,
 		arg.Rating,
+		arg.UpdatedAt,
 		arg.ID,
 	)
 	return err

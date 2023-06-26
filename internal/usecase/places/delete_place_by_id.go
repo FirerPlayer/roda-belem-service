@@ -26,7 +26,7 @@ func NewDeletePlaceByIDUseCase(placesGateway gateway.PlacesGateway) *DeletePlace
 func (uc *DeletePlaceByIDUseCase) Execute(ctx context.Context, input dto.DeletePlaceByIDInputDTO) error {
 	err := uc.PlacesGateway.DeletePlaceById(ctx, input.ID)
 	if err != nil {
-		return errors.New("Failed to delete place " + err.Error())
+		return errors.New("Failed to delete place -> " + err.Error())
 	}
 	return nil
 }

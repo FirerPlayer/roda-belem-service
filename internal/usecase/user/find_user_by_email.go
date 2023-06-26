@@ -26,7 +26,7 @@ func NewFindUserByEmailUsecase(usersGateway gateway.UsersGateway) *FindUserByEma
 func (uc *FindUserByEmailUsecase) Execute(ctx context.Context, email string) (*dto.FindUserByEmailOutputDTO, error) {
 	user, err := uc.UsersGateway.FindUserByEmail(ctx, email)
 	if err != nil {
-		return nil, errors.New("failed to find user " + err.Error())
+		return nil, errors.New("failed to find user -> " + err.Error())
 	}
 
 	return &dto.FindUserByEmailOutputDTO{

@@ -33,12 +33,12 @@ func (uc *AuthenticationJwtUseCase) Execute(ctx context.Context, input dto.Authe
 	// Verifique as credenciais fornecidas e, se forem válidas, gere um token JWT
 	user, err := uc.UsersGateway.FindUserByEmail(ctx, input.Email)
 	if err != nil {
-		return nil, errors.New("user not found " + err.Error())
+		return nil, errors.New("user not found -> " + err.Error())
 	}
 	// Password do usuário vem sempre em hash, então usamos bcrypt para verificar a senha
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password))
 	if err != nil {
-		return nil, errors.New("invalid password " + err.Error())
+		return nil, errors.New("invalid password -> " + err.Error())
 	}
 	exp_date := time.Now().Add(time.Hour * 24 * 365)
 
@@ -49,12 +49,11 @@ func (uc *AuthenticationJwtUseCase) Execute(ctx context.Context, input dto.Authe
 	})
 	tokenString, err := token.SignedString([]byte(uc.JwtSecretKey))
 	if err != nil {
-		return nil, errors.New("failed to generate token " + err.Error())
+		return nil, errors.New("failed to generate token -> " + err.Error())
 	}
 
 	return &dto.AuthenticateJwtUserOutputDTO{
-		Token:     tokenString,
-		ExpiresAt: exp_date,
+		Token: tokenString,
 	}, nil
 
 }

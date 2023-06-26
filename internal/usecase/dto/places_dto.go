@@ -40,17 +40,16 @@ type FindPlaceByIDInputDTO struct {
 }
 
 type FindPlaceByIDOutputDTO struct {
-	ID              string          `json:"id"`
-	Name            string          `json:"name"`
-	FormatedAddress string          `json:"formatedAddress"`
-	Lat             float64         `json:"lat"`
-	Lng             float64         `json:"lng"`
-	Icon            string          `json:"icon"`
-	Types           []string        `json:"types"`
-	OpeningPeriods  []string        `json:"openingPeriods"`
-	Photos          []entity.Photo  `json:"photo"`
-	Rating          float64         `json:"rating"`
-	Reviews         []entity.Review `json:"reviews"`
+	ID              string         `json:"id"`
+	Name            string         `json:"name"`
+	FormatedAddress string         `json:"formatedAddress"`
+	Lat             float64        `json:"lat"`
+	Lng             float64        `json:"lng"`
+	Icon            string         `json:"icon"`
+	Types           []string       `json:"types"`
+	OpeningPeriods  []string       `json:"openingPeriods"`
+	Photos          []entity.Photo `json:"photo"`
+	Rating          float64        `json:"rating"`
 }
 
 type FindPlacesByAccessibilityFeatureInputDTO struct {

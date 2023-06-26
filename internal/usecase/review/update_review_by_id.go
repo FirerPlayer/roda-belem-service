@@ -29,7 +29,7 @@ func (u *UpdateReviewByIDUseCase) Execute(ctx context.Context, input dto.UpdateR
 	}
 	err := u.ReviewsGateway.UpdateReviewByID(ctx, input.ID, review)
 	if err != nil {
-		return errors.New("failed to update review: " + err.Error())
+		return errors.New("failed to update review -> " + err.Error())
 	}
 	return nil
 

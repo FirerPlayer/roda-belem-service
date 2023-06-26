@@ -12,4 +12,4 @@ COPY . .
 
 RUN apt update
 
-CMD [ "tail", "-f", "/dev/null" ]
+CMD [ "go", "run", "cmd/app/main.go" ]

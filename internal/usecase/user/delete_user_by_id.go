@@ -21,7 +21,7 @@ func NewDeleteUserByIDUseCase(usersGateway gateway.UsersGateway) *DeleteUserByID
 func (uc *DeleteUserByIDUseCase) Execute(ctx context.Context, input dto.DeleteUserByIdInputDTO) error {
 	err := uc.UsersGateway.DeleteUserById(ctx, input.UserId)
 	if err != nil {
-		return errors.New("Failed to delete user " + err.Error())
+		return errors.New("Failed to delete user -> " + err.Error())
 	}
 	return nil
 }

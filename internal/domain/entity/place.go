@@ -18,7 +18,6 @@ type Place struct {
 	OpeningPeriods   []string
 	Photos           []Photo
 	Rating           float64
-	Reviews          []Review
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
 }
@@ -36,18 +35,9 @@ func NewPlace(googlePlaceId string, name string, formatedAddress string, lat flo
 		OpeningPeriods:   openingPeriods,
 		Photos:           []Photo{},
 		Rating:           0.0,
-		Reviews:          []Review{},
 		CreatedAt:        time.Now(),
 		UpdatedAt:        time.Now(),
 	}
-}
-
-func (p *Place) RefreshRatings() {
-	rating := 0.0
-	for _, review := range p.Reviews {
-		rating += review.Rating
-	}
-	p.Rating = rating / float64(len(p.Reviews))
 }
 
 func (p *Place) GetRating() float64 {

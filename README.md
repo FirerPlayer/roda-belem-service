@@ -1,7 +1,7 @@
 <div align="center" id="top"> 
   <img src="./.github/app.gif" alt="Roda Belem Service" />
 
-  &#xa0;
+&#xa0;
 
   <!-- <a href="https://rodabelemservice.netlify.app">Demo</a> -->
 </div>
@@ -26,9 +26,9 @@
 
 <!-- Status -->
 
-<!-- <h4 align="center"> 
+<!-- <h4 align="center">
 	🚧  Roda Belem Service 🚀 Under construction...  🚧
-</h4> 
+</h4>
 
 <hr> -->
 
@@ -44,33 +44,41 @@
 
 <br>
 
-## :dart: About ##
+## :dart: About
 
 The backend service for the Roda Belém app has a hexagonal architecture with a REST API and consumes the Google Places API. It is designed for high-performance communication with the Roda Belém frontend.
 
-## :sparkles: Features ##
+## :sparkles: Features
 
 :heavy_check_mark: Hexagonal Architecture\
 :heavy_check_mark: Scalable and easy maintenance\
-:heavy_check_mark: Bloom filter implemented to reduce latency and improve server response\
+:heavy_check_mark: Cuckoo filter implemented to reduce latency and improve server response\
+:heavy_check_mark: Jwt authentication\
 :heavy_check_mark: Data persistence in MySQL database\
 :heavy_check_mark: No ORM approach, with SQLC, for faster database interaction
 
-## :rocket: Technologies ##
+## :rocket: Technologies
 
 The following tools were used in this project:
 
-- [Expo](https://expo.io/)
-- [Node.js](https://nodejs.org/en/)
-- [React](https://pt-br.reactjs.org/)
-- [React Native](https://reactnative.dev/)
-- [TypeScript](https://www.typescriptlang.org/)
+- [Go](https://go.dev) \
+- [Chi](https://github.com/go-chi/chi)
+- [sqlc](https://sqlc.dev)
+- [viper](https://github.com/spf13/viper)
+- [jwt](https://github.com/golang-jwt/jwt)
+- [Google Maps Services](https://github.com/googlemaps/google-maps-services-go)
+- [Docker](https://www.docker.com) \
+- [Docker Compose](https://docs.docker.com/compose/)
+- [MySQL](https://www.mysql.com)
 
-## :white_check_mark: Requirements ##
+## :white_check_mark: Requirements
 
-Before starting :checkered_flag:, you need to have [Git](https://git-scm.com) and [Node](https://nodejs.org/en/) installed.
+Before starting :checkered_flag:, you need to have [Docker](https://www.docker.com) (with composer) and some database manager or MySQL managers (like MySQL Workbench) installed.
 
-## :checkered_flag: Starting ##
+Create a .env file based on .env.example, you can configure the database environment variables. Remember to add your own APIs keys.
+Open the database and create tables according to the sql in schemas folder.
+
+## :checkered_flag: Runing up the service
 
 ```bash
 # Clone this project
@@ -79,19 +87,13 @@ $ git clone https://github.com/FirerPlayer/roda-belem-service
 # Access
 $ cd roda-belem-service
 
-# Install dependencies
-$ yarn
-
-# Run the project
-$ yarn start
-
-# The server will initialize in the <http://localhost:3000>
+# Run containers
+$ docker compose up -d
 ```
 
-## :memo: License ##
+## :memo: License
 
 This project is under license from MIT. For more details, see the [LICENSE](LICENSE.md) file.
-
 
 Made with :heart: by <a href="https://github.com/FirerPlayer" target="_blank">Micael</a>
 

@@ -21,7 +21,7 @@ func NewFindReviewByIdUseCase(reviewGateway gateway.ReviewsGateway) *FindReviewB
 func (u *FindReviewByIDUseCase) Execute(ctx context.Context, input dto.FindReviewByIDInputDTO) (*dto.FindReviewByIDOutputDTO, error) {
 	review, err := u.ReviewGateway.FindReviewByID(ctx, input.Id)
 	if err != nil {
-		return nil, errors.New("review not found: " + err.Error())
+		return nil, errors.New("review not found -> " + err.Error())
 	}
 	return &dto.FindReviewByIDOutputDTO{
 		ID:                    review.ID.String(),

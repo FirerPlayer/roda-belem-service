@@ -5,6 +5,8 @@ services:
     build: .
     container_name: rodabelem_service
     restart: always
+    environment:
+      TZ: America/Belem
     volumes:
       - .:/go/src
     ports:

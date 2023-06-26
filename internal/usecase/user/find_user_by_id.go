@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 
 	"github.com/firerplayer/roda-belem-service/internal/domain/gateway"
 	"github.com/firerplayer/roda-belem-service/internal/usecase/dto"
@@ -20,7 +21,7 @@ func NewFindUserByIdUseCase(usersGateway gateway.UsersGateway) *FindUserByIDUseC
 func (uc *FindUserByIDUseCase) Execute(ctx context.Context, id string) (*dto.FindUserByIDOutputDTO, error) {
 	user, err := uc.UsersGateway.FindUserById(ctx, id)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("Failed to find user -> " + err.Error())
 	}
 
 	return &dto.FindUserByIDOutputDTO{

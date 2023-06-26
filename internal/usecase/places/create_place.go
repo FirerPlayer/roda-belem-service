@@ -6,19 +6,19 @@ import (
 
 	"github.com/firerplayer/roda-belem-service/internal/domain/entity"
 	"github.com/firerplayer/roda-belem-service/internal/domain/gateway"
-	"github.com/firerplayer/roda-belem-service/internal/infra/blooms"
+	"github.com/firerplayer/roda-belem-service/internal/infra/filters"
 	"github.com/firerplayer/roda-belem-service/internal/usecase/dto"
 )
 
 type CreatePlaceUseCase struct {
 	PlacesGateway gateway.PlacesGateway
-	BloomFilter   *blooms.BloomFilter
+	CuckooFilter  *filters.CuckooFilter
 }
 
-func NewCreatePlaceUseCase(placesGateway gateway.PlacesGateway, bloomFilter *blooms.BloomFilter) *CreatePlaceUseCase {
+func NewCreatePlaceUseCase(placesGateway gateway.PlacesGateway, cuckooFilter *filters.CuckooFilter) *CreatePlaceUseCase {
 	return &CreatePlaceUseCase{
 		PlacesGateway: placesGateway,
-		BloomFilter:   bloomFilter,
+		CuckooFilter:  cuckooFilter,
 	}
 }
 
@@ -35,9 +35,9 @@ func (uc *CreatePlaceUseCase) Execute(ctx context.Context, input *dto.CreatePlac
 	)
 	err := uc.PlacesGateway.Create(ctx, newPlace)
 	if err != nil {
-		return errors.New("Failed to create place: " + err.Error())
+		return errors.New("Failed to create place -> " + err.Error())
 	}
-	uc.BloomFilter.Add(newPlace.ID.String())
+	uc.CuckooFilter.Add(newPlace.ID.String())
 
 	return nil
 }
