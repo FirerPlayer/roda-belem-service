@@ -61,13 +61,13 @@ The backend service for the Roda Belém app has a hexagonal architecture with a 
 
 The following tools were used in this project:
 
-- [Go](https://go.dev) \
+- [Go](https://go.dev)
 - [Chi](https://github.com/go-chi/chi)
 - [sqlc](https://sqlc.dev)
 - [viper](https://github.com/spf13/viper)
 - [jwt](https://github.com/golang-jwt/jwt)
 - [Google Maps Services](https://github.com/googlemaps/google-maps-services-go)
-- [Docker](https://www.docker.com) \
+- [Docker](https://www.docker.com)
 - [Docker Compose](https://docs.docker.com/compose/)
 - [MySQL](https://www.mysql.com)
 
