@@ -18,7 +18,6 @@
 # vendor/
 .env
 .docker
-tmp/*
 
 # Go workspace file
 go.work

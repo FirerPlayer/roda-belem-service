@@ -50,7 +50,7 @@ func (u *FindNearbyPlacesUseCase) GetNearbyPlacesFromGoogleMapsWithPersistence(c
 			newPlace := entity.NewPlace(
 				place.PlaceID,
 				place.Name,
-				place.FormattedAddress,
+				place.Vicinity,
 				place.Geometry.Location.Lat,
 				place.Geometry.Location.Lng,
 				place.Icon,

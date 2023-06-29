@@ -3,6 +3,7 @@ FROM golang:1.20.3
 # Set environment variables
 ENV PATH="/root/.cargo/bin:${PATH}"
 ENV USER=root
+ENV TZ=America/Belem
 
 WORKDIR /go/src
 RUN ln -sf /bin/bash /bin/sh

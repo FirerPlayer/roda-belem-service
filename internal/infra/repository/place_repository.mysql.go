@@ -106,7 +106,7 @@ func (p *PlaceRepositoryMySQL) FindNearbyPlaces(ctx context.Context, latitude fl
 	params := db.FindPlacesNearbyParams{
 		POINT:   latitude,
 		POINT_2: longitude,
-		Lat:     sql.NullFloat64{Float64: latitude, Valid: true},
+		Lat:     sql.NullFloat64{Float64: radius, Valid: true},
 	}
 
 	places, err := p.Queries.FindPlacesNearby(ctx, params)

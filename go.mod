@@ -10,7 +10,7 @@ require (
 	github.com/panmari/cuckoofilter v1.0.3
 	github.com/spf13/viper v1.16.0
 	golang.org/x/crypto v0.9.0
-	googlemaps.github.io/maps v1.4.0
+	googlemaps.github.io/maps v1.5.0
 )
 
 require (
