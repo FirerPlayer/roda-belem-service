@@ -82,7 +82,7 @@ func setupPlacesHandlers(webserver *webserver.WebServer, repoPlaceMySql gateway.
 	webserver.AddDeleteHandler("/places/delete", placesHandlers.DeletePlaceByID)
 	webserver.AddGetHandler("/places/find", placesHandlers.FindPlaceByID)
 	webserver.AddGetHandler("/places/nearby", placesHandlers.FindNearbyPlaces)
-	webserver.AddGetHandler("/places/feature", placesHandlers.FindPlacesByAccessibilityFeature)
+	webserver.AddGetHandler("/places/accessibility", placesHandlers.FindPlacesByAccessibilityFeature)
 	webserver.AddPostHandler("/places/update", placesHandlers.UpdatePLaceByID)
 	webserver.AddGetHandler("/places/server/save-filter", placesHandlers.SaveFilter)
 
@@ -112,11 +112,11 @@ func setupReviewHandlers(webserver *webserver.WebServer, repoReviewMySql gateway
 		r.Use(middlewares.AuthJWTMiddleware)
 		r.Post("/reviews/create", reviewsHandlers.CreateReview)
 		r.Delete("/reviews/delete", reviewsHandlers.DeleteReviewByID)
-		r.Get("/reviews/find-by-userid", reviewsHandlers.FindReviewsByUserID)
 		r.Post("/reviews/update", reviewsHandlers.UpdateReviewByID)
-		r.Post("/reviews/add-feature", reviewsHandlers.AddAccessibilityFeatureByReviewID)
+		r.Get("/reviews/add-feature", reviewsHandlers.AddAccessibilityFeatureByReviewID)
 	})
 
+	webserver.AddGetHandler("/reviews/find-by-userid", reviewsHandlers.FindReviewsByUserID)
 	webserver.AddGetHandler("/reviews/find", reviewsHandlers.FindReviewByID)
 	webserver.AddGetHandler("/reviews/find-by-placeid", reviewsHandlers.FindReviewsByPlaceID)
 }
@@ -149,9 +149,9 @@ func setupUsersHandlers(webserver *webserver.WebServer, repoUserMySql gateway.Us
 	webserver.AddGroupRoute(func(r chi.Router) {
 		r.Use(middlewares.AuthJWTMiddleware)
 		r.Post("/users/update", usersHandlers.UpdateUserByID)
-		r.Post("/users/update-points", usersHandlers.UpdateUserPointsByUserId)
+		r.Get("/users/update-points", usersHandlers.UpdateUserPointsByUserId)
 		r.Delete("/users/delete-favorite", usersHandlers.DeleteFavoriteByUserIdAndPlaceId)
-		r.Post("/users/add-favorite", usersHandlers.AddFavoriteByUserIdAndPlaceId)
+		r.Get("/users/add-favorite", usersHandlers.AddFavoriteByUserIdAndPlaceId)
 	})
 
 	webserver.AddPostHandler("/users/create", usersHandlers.CreateUser)

@@ -3,6 +3,7 @@ package web
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/firerplayer/roda-belem-service/internal/usecase/dto"
 	usecase "github.com/firerplayer/roda-belem-service/internal/usecase/places"
@@ -55,12 +56,13 @@ func (h *WebPlacesHandlers) CreatePlace(w http.ResponseWriter, r *http.Request) 
 
 func (h *WebPlacesHandlers) DeletePlaceByID(w http.ResponseWriter, r *http.Request) {
 	var input dto.DeletePlaceByIDInputDTO
-	err := json.NewDecoder(r.Body).Decode(&input)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	id := r.URL.Query().Get("id")
+	if id == "" {
+		http.Error(w, "Bad request", http.StatusBadRequest)
 		return
 	}
-	err = h.DeletePlaceByIDUseCase.Execute(r.Context(), input)
+	input.ID = id
+	err := h.DeletePlaceByIDUseCase.Execute(r.Context(), input)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -71,7 +73,31 @@ func (h *WebPlacesHandlers) DeletePlaceByID(w http.ResponseWriter, r *http.Reque
 
 func (h *WebPlacesHandlers) FindNearbyPlaces(w http.ResponseWriter, r *http.Request) {
 	var input dto.FindNearbyPlacesInputDTO
-	err := json.NewDecoder(r.Body).Decode(&input)
+	var err error
+	lat := r.URL.Query().Get("lat")
+	lng := r.URL.Query().Get("lng")
+	radius := r.URL.Query().Get("radius")
+	isFromGoogle := r.URL.Query().Get("isFromGoogle")
+	if lat == "" || lng == "" || radius == "" || isFromGoogle == "" {
+		http.Error(w, "Bad request", http.StatusBadRequest)
+		return
+	}
+	input.Lat, err = strconv.ParseFloat(lat, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	input.Lng, err = strconv.ParseFloat(lng, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	input.Radius, err = strconv.ParseFloat(radius, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	input.IsFromGoogle, err = strconv.ParseBool(isFromGoogle)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -88,13 +114,11 @@ func (h *WebPlacesHandlers) FindNearbyPlaces(w http.ResponseWriter, r *http.Requ
 
 func (h *WebPlacesHandlers) FindPlaceByID(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
-	input := dto.FindPlaceByIDInputDTO{ID: id}
-
-	err := json.NewDecoder(r.Body).Decode(&input)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	if id == "" {
+		http.Error(w, "id is required", http.StatusBadRequest)
 		return
 	}
+	input := dto.FindPlaceByIDInputDTO{ID: id}
 	output, err := h.FindPlaceByIDUseCase.Execute(r.Context(), input)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -107,11 +131,12 @@ func (h *WebPlacesHandlers) FindPlaceByID(w http.ResponseWriter, r *http.Request
 
 func (h *WebPlacesHandlers) FindPlacesByAccessibilityFeature(w http.ResponseWriter, r *http.Request) {
 	var input dto.FindPlacesByAccessibilityFeatureInputDTO
-	err := json.NewDecoder(r.Body).Decode(&input)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	feat := r.URL.Query().Get("feature")
+	if feat == "" {
+		http.Error(w, "feature is required", http.StatusBadRequest)
 		return
 	}
+	input.AccessibilityFeature = feat
 	output, err := h.FindPlacesByAccessibilityFeatureUseCase.Execute(r.Context(), input)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -147,49 +172,3 @@ func (h *WebPlacesHandlers) SaveFilter(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 }
-
-// import (
-// 	"encoding/json"
-// 	"net/http"
-
-// 	"github.com/firerplayer/hexagonal-arch-go/internal/usecase"
-// )
-
-// type ProductHandlers struct {
-// 	CreateProductUsecase *usecase.CreateProductUseCase
-// 	ListProductUseCase   *usecase.ListProductsUseCase
-// }
-
-// func NewProductHandlers(createProductUsecase *usecase.CreateProductUseCase, listProductsUseCase *usecase.ListProductsUseCase) *ProductHandlers {
-// 	return &ProductHandlers{
-// 		CreateProductUsecase: createProductUsecase,
-// 		ListProductUseCase:   listProductsUseCase,
-// 	}
-// }
-
-// func (h *ProductHandlers) CreateProduct(w http.ResponseWriter, r *http.Request) {
-// 	var input usecase.CreateProductInputDto
-// 	err := json.NewDecoder(r.Body).Decode(&input)
-// 	if err != nil {
-// 		w.WriteHeader(http.StatusBadRequest)
-// 		return
-// 	}
-// 	output, err := h.CreateProductUsecase.Execute(input)
-// 	if err != nil {
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		return
-// 	w.Header().Set("Content-Type", "application/json")
-// 	w.WriteHeader(http.StatusCreated)
-// 	json.NewEncoder(w).Encode(output)
-// }
-
-// func (h *ProductHandlers) ListProducts(w http.ResponseWriter, r *http.Request) {
-// 	output, err := h.ListProductUseCase.Execute()
-// 	if err != nil {
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		return
-// 	}
-// 	w.Header().Set("Content-Type", "application/json")
-// 	w.WriteHeader(http.StatusOK)
-// 	json.NewEncoder(w).Encode(output)
-// }

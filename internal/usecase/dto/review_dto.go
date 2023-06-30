@@ -23,7 +23,7 @@ type FindReviewByIDOutputDTO struct {
 	ID                    string            `json:"id"`
 	PlaceID               string            `json:"placeId"`
 	UserID                string            `json:"userId"`
-	Content               string            `json:"text"`
+	Content               string            `json:"content"`
 	Photos                []entity.Photo    `json:"photos"`
 	Rating                float64           `json:"rating"`
 	Reactions             []entity.Reaction `json:"reactions"`
@@ -42,7 +42,7 @@ type FindReviewsByPlaceIDOutputDTO struct {
 	ID                    string            `json:"id"`
 	PlaceID               string            `json:"placeId"`
 	UserID                string            `json:"userId"`
-	Content               string            `json:"text"`
+	Content               string            `json:"content"`
 	Photos                []entity.Photo    `json:"photos"`
 	Rating                float64           `json:"rating"`
 	Reactions             []entity.Reaction `json:"reactions"`
@@ -61,7 +61,7 @@ type FindReviewsByUserIDOutputDTO struct {
 	ID                    string            `json:"id"`
 	PlaceID               string            `json:"placeId"`
 	UserID                string            `json:"userId"`
-	Content               string            `json:"text"`
+	Content               string            `json:"content"`
 	Photos                []entity.Photo    `json:"photos"`
 	Rating                float64           `json:"rating"`
 	Reactions             []entity.Reaction `json:"reactions"`
@@ -72,7 +72,7 @@ type FindReviewsByUserIDOutputDTO struct {
 
 type AddAccessibilityFeaturesByReviewIDInputDTO struct {
 	ReviewID string
-	Features []string
+	Features string
 }
 
 type DeleteReviewByIDInputDTO struct {

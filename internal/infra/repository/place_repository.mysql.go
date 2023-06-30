@@ -126,9 +126,13 @@ func (p *PlaceRepositoryMySQL) FindNearbyPlaces(ctx context.Context, latitude fl
 }
 
 func (p *PlaceRepositoryMySQL) UpdatePlaceById(ctx context.Context, id string, place *entity.Place) error {
+	gooId := sql.NullString{String: place.GooglePlaceId, Valid: true}
+	if place.GooglePlaceId == "" {
+		gooId.Valid = false
+	}
 	args := db.UpdatePlaceByIdParams{
 		ID:               place.ID.String(),
-		GooglePlaceID:    sql.NullString{String: place.GooglePlaceId, Valid: true},
+		GooglePlaceID:    gooId,
 		Name:             sql.NullString{String: place.Name, Valid: true},
 		FormattedAddress: sql.NullString{String: place.FormattedAddress, Valid: true},
 		Lat:              sql.NullFloat64{Float64: place.Lat, Valid: true},

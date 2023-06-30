@@ -3,7 +3,6 @@ package usecase
 import (
 	"context"
 	"errors"
-	"strings"
 
 	"github.com/firerplayer/roda-belem-service/internal/domain/gateway"
 	"github.com/firerplayer/roda-belem-service/internal/usecase/dto"
@@ -20,8 +19,7 @@ func NewAddAccessibilityFeaturesByReviewIdUseCase(reviewGateway gateway.ReviewsG
 }
 
 func (u *AddAccessibilityFeaturesByReviewIDUseCase) Execute(ctx context.Context, input dto.AddAccessibilityFeaturesByReviewIDInputDTO) error {
-	formatedFeatures := strings.Join(input.Features, ",")
-	err := u.ReviewGateway.AddAccessibilityFeatureByReviewID(ctx, input.ReviewID, formatedFeatures)
+	err := u.ReviewGateway.AddAccessibilityFeatureByReviewID(ctx, input.ReviewID, input.Features)
 	if err != nil {
 		return errors.New("error adding accessibility features -> " + err.Error())
 	}

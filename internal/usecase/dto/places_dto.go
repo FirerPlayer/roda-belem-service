@@ -71,7 +71,7 @@ type FindPlacesByAccessibilityFeatureOutputDTO struct {
 
 type UpdatePlaceByIDInputDTO struct {
 	PlaceToUpadteID string         `json:"id"`
-	GooglePlaceId   string         `json:"GooglePlaceId"`
+	GooglePlaceId   string         `json:"googlePlaceId"`
 	Name            string         `json:"name"`
 	FormatedAddress string         `json:"formatedAddress"`
 	Lat             float64        `json:"lat"`

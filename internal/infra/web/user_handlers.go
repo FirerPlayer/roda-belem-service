@@ -3,31 +3,11 @@ package web
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/firerplayer/roda-belem-service/internal/usecase/dto"
 	usecase "github.com/firerplayer/roda-belem-service/internal/usecase/user"
 )
-
-/*
-type UsersGateway interface {
-	CreateUser(ctx context.Context, user *entity.User) error
-	ListAllUsers(ctx context.Context) ([]*entity.User, error)
-	FindUserById(ctx context.Context, id string) (*entity.User, error)
-	FindUserByEmail(ctx context.Context, email string) (*entity.User, error)
-	UpdateUserById(ctx context.Context, id string, user *entity.User) error
-	DeleteUserById(ctx context.Context, id string) error
-	UpdateUserPointsByUserId(ctx context.Context, userId string, points int) error
-	AddFavoriteByUserIdAndPlaceId(ctx context.Context, userId string, placeId string) error
-	DeleteFavoriteByUserIdAndPlaceId(ctx context.Context, userId string, placeId string) error
-	// FindFavoritesByUserId returns a slice of strings containing the favorites of a user given their user ID.
-	//
-	// ctx is the context of the request.
-	// userId is the ID of the user whose favorites are being searched.
-	// It returns a slice of strings representing the favorites of the user and an error if any occurred.
-	//
-	FindFavoritesByUserId(ctx context.Context, userId string) ([]string, error)
-}
-*/
 
 type WebUserHandlers struct {
 	CreateUserUseCase                       usecase.CreateUserUsecase
@@ -94,12 +74,17 @@ func (h *WebUserHandlers) ListAllUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *WebUserHandlers) FindUserByID(w http.ResponseWriter, r *http.Request) {
-	var input dto.FindUserByIDInputDTO
-	err := json.NewDecoder(r.Body).Decode(&input)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	// err := json.NewDecoder(r.Body).Decode(&input)
+	// if err != nil {
+	// 	http.Error(w, err.Error(), http.StatusBadRequest)
+	// 	return
+	// }
+	id := r.URL.Query().Get("id")
+	if id == "" {
+		http.Error(w, "id is required", http.StatusBadRequest)
 		return
 	}
+	input := dto.FindUserByIDInputDTO{UserId: id}
 	user, err := h.FindUserByIdUseCase.Execute(r.Context(), input.UserId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -144,13 +129,13 @@ func (h *WebUserHandlers) UpdateUserByID(w http.ResponseWriter, r *http.Request)
 }
 
 func (h *WebUserHandlers) DeleteUserByID(w http.ResponseWriter, r *http.Request) {
-	var input dto.DeleteUserByIdInputDTO
-	err := json.NewDecoder(r.Body).Decode(&input)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	id := r.URL.Query().Get("id")
+	if id == "" {
+		http.Error(w, "id is required", http.StatusBadRequest)
 		return
 	}
-	err = h.DeleteUserByIDUseCase.Execute(r.Context(), input)
+	input := dto.DeleteUserByIdInputDTO{UserId: id}
+	err := h.DeleteUserByIDUseCase.Execute(r.Context(), input)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -160,12 +145,18 @@ func (h *WebUserHandlers) DeleteUserByID(w http.ResponseWriter, r *http.Request)
 }
 
 func (h *WebUserHandlers) UpdateUserPointsByUserId(w http.ResponseWriter, r *http.Request) {
-	var input dto.UpdateUserPointsByUserIDInputDTO
-	err := json.NewDecoder(r.Body).Decode(&input)
+	id := r.URL.Query().Get("userId")
+	if id == "" {
+		http.Error(w, "id is required", http.StatusBadRequest)
+		return
+	}
+	points, err := strconv.ParseInt(r.URL.Query().Get("points"), 10, 64)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	input := dto.UpdateUserPointsByUserIDInputDTO{UserId: id, Points: int(points)}
+
 	err = h.UpdateUserPointsByUserIdUseCase.Execute(r.Context(), input)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
