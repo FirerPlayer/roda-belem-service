@@ -130,6 +130,7 @@ func setupUsersHandlers(webserver *webserver.WebServer, repoUserMySql gateway.Us
 	updateUserByIdUseCase := usecaseUser.NewUpdateUserUseCase(repoUserMySql)
 	updateUserPointsByUserIdUseCase := usecaseUser.NewUpdateUserPointsByUserIDUseCase(repoUserMySql)
 	addFavoriteUseCase := usecaseUser.NewAddFavoritesUseCase(repoUserMySql)
+	findFavoritesByUserIDUseCase := usecaseUser.NewFindFavoritesByUserIDUseCase(repoUserMySql)
 	listAllUsersUseCase := usecaseUser.NewListAllUsersUsecase(repoUserMySql)
 	deleteFavoriteByUserIdUseCase := usecaseUser.NewDeleteFavoriteUseCase(repoUserMySql)
 	authenticationJwtUseCase := usecaseUser.NewAuthenticationJwtUseCase(repoUserMySql, jwtSecretKey)
@@ -143,6 +144,7 @@ func setupUsersHandlers(webserver *webserver.WebServer, repoUserMySql gateway.Us
 		*deleteUserByIdUseCase,
 		*updateUserPointsByUserIdUseCase,
 		*addFavoriteUseCase,
+		*findFavoritesByUserIDUseCase,
 		*deleteFavoriteByUserIdUseCase,
 		*authenticationJwtUseCase,
 	)
@@ -152,6 +154,7 @@ func setupUsersHandlers(webserver *webserver.WebServer, repoUserMySql gateway.Us
 		r.Get("/users/update-points", usersHandlers.UpdateUserPointsByUserId)
 		r.Delete("/users/delete-favorite", usersHandlers.DeleteFavoriteByUserIdAndPlaceId)
 		r.Get("/users/add-favorite", usersHandlers.AddFavoriteByUserIdAndPlaceId)
+		r.Get("/users/favorite", usersHandlers.FindFavoritesByUserId)
 	})
 
 	webserver.AddPostHandler("/users/create", usersHandlers.CreateUser)

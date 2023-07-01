@@ -18,6 +18,7 @@ type WebUserHandlers struct {
 	DeleteUserByIDUseCase                   usecase.DeleteUserByIDUseCase
 	UpdateUserPointsByUserIdUseCase         usecase.UpdateUserPointsByUserIdUseCase
 	AddFavoriteByUserIdAndPlaceIdUseCase    usecase.AddFavoritesUseCase
+	findFavoritesByUserIdUseCase            usecase.FindFavoritesByUserIDUseCase
 	DeleteFavoriteByUserIdAndPlaceIdUseCase usecase.DeleteFavoriteUseCase
 	AuthenticateJwtUseCase                  usecase.AuthenticationJwtUseCase
 }
@@ -31,6 +32,7 @@ func NewWebUserHandler(
 	deleteUserByIDUseCase usecase.DeleteUserByIDUseCase,
 	updateUserPointsByUserIdUseCase usecase.UpdateUserPointsByUserIdUseCase,
 	addFavoriteByUserIdAndPlaceIdUseCase usecase.AddFavoritesUseCase,
+	findFavoritesByUserIdUseCase usecase.FindFavoritesByUserIDUseCase,
 	deleteFavoriteByUserIdAndPlaceIdUseCase usecase.DeleteFavoriteUseCase,
 	authenticateJwtUseCase usecase.AuthenticationJwtUseCase,
 ) *WebUserHandlers {
@@ -43,6 +45,7 @@ func NewWebUserHandler(
 		DeleteUserByIDUseCase:                   deleteUserByIDUseCase,
 		UpdateUserPointsByUserIdUseCase:         updateUserPointsByUserIdUseCase,
 		AddFavoriteByUserIdAndPlaceIdUseCase:    addFavoriteByUserIdAndPlaceIdUseCase,
+		findFavoritesByUserIdUseCase:            findFavoritesByUserIdUseCase,
 		DeleteFavoriteByUserIdAndPlaceIdUseCase: deleteFavoriteByUserIdAndPlaceIdUseCase,
 		AuthenticateJwtUseCase:                  authenticateJwtUseCase,
 	}
@@ -180,6 +183,24 @@ func (h *WebUserHandlers) AddFavoriteByUserIdAndPlaceId(w http.ResponseWriter, r
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
+}
+
+func (h *WebUserHandlers) FindFavoritesByUserId(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("userId")
+	if id == "" {
+		http.Error(w, "userId is required", http.StatusBadRequest)
+		return
+	}
+	input := dto.FindFavoritesByUserIdInputDTO{UserId: id}
+	favorites, err := h.findFavoritesByUserIdUseCase.Execute(r.Context(), input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(favorites)
+
 }
 
 func (h *WebUserHandlers) DeleteFavoriteByUserIdAndPlaceId(w http.ResponseWriter, r *http.Request) {
