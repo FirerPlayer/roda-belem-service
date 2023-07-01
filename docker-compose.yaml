@@ -2,7 +2,7 @@ version: '3'
 
 services:
   app:
-    image: firerplayer/roda-belem-service-app:latest
+    build: .
     container_name: rodabelem_service
     restart: always
     environment:
