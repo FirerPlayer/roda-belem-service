@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/rs/cors"
 )
 
 type WebServer struct {
@@ -45,6 +46,7 @@ func (s *WebServer) AddGroupRoute(route func(r chi.Router)) {
 
 func (s *WebServer) Start() {
 	s.Router.Use(middleware.Logger)
+	s.Router.Use(cors.AllowAll().Handler)
 	for path, handler := range s.GetHandlers {
 		s.Router.Get(path, handler)
 	}

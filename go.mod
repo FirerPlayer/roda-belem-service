@@ -8,6 +8,7 @@ require (
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/google/uuid v1.3.0
 	github.com/panmari/cuckoofilter v1.0.3
+	github.com/rs/cors v1.9.0
 	github.com/spf13/viper v1.16.0
 	golang.org/x/crypto v0.9.0
 	googlemaps.github.io/maps v1.5.0

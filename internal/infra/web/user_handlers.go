@@ -170,13 +170,19 @@ func (h *WebUserHandlers) UpdateUserPointsByUserId(w http.ResponseWriter, r *htt
 }
 
 func (h *WebUserHandlers) AddFavoriteByUserIdAndPlaceId(w http.ResponseWriter, r *http.Request) {
-	var input dto.AddFavoritesInputDTO
-	err := json.NewDecoder(r.Body).Decode(&input)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	userId := r.URL.Query().Get("userId")
+	if userId == "" {
+		http.Error(w, "userId is required", http.StatusBadRequest)
 		return
 	}
-	err = h.AddFavoriteByUserIdAndPlaceIdUseCase.Execute(r.Context(), input)
+	placeId := r.URL.Query().Get("placeId")
+	if placeId == "" {
+		http.Error(w, "placeId is required", http.StatusBadRequest)
+		return
+	}
+	input := dto.AddFavoritesInputDTO{UserId: userId, PlaceId: placeId}
+
+	err := h.AddFavoriteByUserIdAndPlaceIdUseCase.Execute(r.Context(), input)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -204,13 +210,18 @@ func (h *WebUserHandlers) FindFavoritesByUserId(w http.ResponseWriter, r *http.R
 }
 
 func (h *WebUserHandlers) DeleteFavoriteByUserIdAndPlaceId(w http.ResponseWriter, r *http.Request) {
-	var input dto.DeleteFavoriteByUserIdAndPlaceIdInputDTO
-	err := json.NewDecoder(r.Body).Decode(&input)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	userId := r.URL.Query().Get("userId")
+	if userId == "" {
+		http.Error(w, "userId is required", http.StatusBadRequest)
 		return
 	}
-	err = h.DeleteFavoriteByUserIdAndPlaceIdUseCase.Execute(r.Context(), input)
+	placeId := r.URL.Query().Get("placeId")
+	if placeId == "" {
+		http.Error(w, "placeId is required", http.StatusBadRequest)
+		return
+	}
+	input := dto.DeleteFavoriteByUserIdAndPlaceIdInputDTO{UserId: userId, PlaceId: placeId}
+	err := h.DeleteFavoriteByUserIdAndPlaceIdUseCase.Execute(r.Context(), input)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
