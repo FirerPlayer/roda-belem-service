@@ -47,6 +47,7 @@
 ## :dart: About
 
 The backend service for the Roda Belém app has a hexagonal architecture with a REST API and consumes the Google Places API. It is designed for high-performance communication with the Roda Belém frontend.
+The frontend code of the app is <a href="https://github.com/FirerPlayer/roda-belem" target="_blank">here</a>
 
 ## :sparkles: Features
 
